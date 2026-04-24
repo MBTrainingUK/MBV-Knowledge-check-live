@@ -113,7 +113,7 @@
   <h1>Response Tracker</h1>
   <button class="btn btn-outline" id="btn-refresh">🔄 Refresh</button>
   <button class="btn btn-primary" id="btn-export-csv">⬇ Export CSV</button>
-  <button class="btn btn-danger" id="btn-clear" style="margin-left:auto;">🗑 Clear All Data</button>
+  <a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vR8UHtnongivkhDLYIHpXSe5Wx8HpzhQGkj1iltSKyQe6eB-BxpK7TU6P6ae96oSFcITiCBTf1c0QOf/pubhtml" target="_blank" class="btn btn-outline" style="margin-left:auto;">📊 Open Google Sheet</a>
 </div>
 
 <main>
@@ -165,19 +165,87 @@
 </div>
 
 <script>
-const STORAGE_KEY   = 'mbv_kc_responses';
 const QUESTIONS_FILE = '../quiz/questions.json';
 
+const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR8UHtnongivkhDLYIHpXSe5Wx8HpzhQGkj1iltSKyQe6eB-BxpK7TU6P6ae96oSFcITiCBTf1c0QOf/pub?gid=133078932&single=true&output=csv';
+
 let allResponses = [];
-let questionsData = null;   // full questions.json
-let questionIndex = {};     // id → full question object (with options + correct)
+let questionsData = null;
+let questionIndex = {};
 let sortField = 'timestamp';
 let sortDir = -1;
 
-function loadData() {
+// Parse a CSV string into an array of row arrays, handling quoted fields
+function parseCSV(text) {
+  const rows = [];
+  const lines = text.split(/\r?\n/);
+  for (const line of lines) {
+    if (!line.trim()) continue;
+    const cols = [];
+    let cur = '', inQuote = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"') {
+        if (inQuote && line[i+1] === '"') { cur += '"'; i++; }
+        else inQuote = !inQuote;
+      } else if (ch === ',' && !inQuote) {
+        cols.push(cur); cur = '';
+      } else {
+        cur += ch;
+      }
+    }
+    cols.push(cur);
+    rows.push(cols);
+  }
+  return rows;
+}
+
+async function loadData() {
   try {
-    allResponses = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-  } catch(e) { allResponses = []; }
+    const res  = await fetch(SHEET_CSV_URL);
+    const text = await res.text();
+    const rows = parseCSV(text);
+
+    if (rows.length < 2) { allResponses = []; return; }
+
+    const headers = rows[0]; // ['Timestamp','Name','Email','MA','Cohort','Training Date', ...question cols]
+    const qHeaders = headers.slice(6); // question columns start at index 6
+
+    // Build a questions_snapshot skeleton from the column headers
+    // Header format: "[MCQ] Question text..." or "[OPEN] Question text..."
+    const snapshotTemplate = qHeaders.map((h, i) => {
+      const typeMatch = h.match(/^\[(MCQ|OPEN)\]\s*/i);
+      const type = typeMatch ? typeMatch[1].toLowerCase() : 'open';
+      const text = h.replace(/^\[(MCQ|OPEN)\]\s*/i, '');
+      return { id: 'q' + i, type, text };
+    });
+
+    allResponses = rows.slice(1).map((row, ri) => {
+      const answers = {};
+      qHeaders.forEach((_, i) => {
+        const val = (row[6 + i] || '').trim();
+        if (val !== '') answers['q' + i] = val;
+      });
+
+      return {
+        id:        'sheet-' + ri,
+        timestamp: row[0] ? new Date(row[0]).toISOString() : new Date().toISOString(),
+        cohort:    row[4] || '',
+        training_date: row[5] || '',
+        participant: {
+          name:  row[1] || '',
+          email: row[2] || '',
+          ma:    row[3] || ''
+        },
+        answers,
+        questions_snapshot: snapshotTemplate
+      };
+    });
+
+  } catch(e) {
+    console.warn('Could not load Sheet CSV:', e);
+    allResponses = [];
+  }
 }
 
 async function loadQuestions() {
@@ -538,19 +606,13 @@ document.getElementById('btn-export-csv').addEventListener('click', () => {
 
 document.getElementById('btn-refresh').addEventListener('click', () => render());
 
-document.getElementById('btn-clear').addEventListener('click', () => {
-  if (confirm('Are you sure you want to delete ALL response data? This cannot be undone.')) {
-    localStorage.removeItem(STORAGE_KEY);
-    render();
-  }
-});
 
 document.getElementById('search-input').addEventListener('input', e => {
   renderTable(e.target.value);
 });
 
 async function render() {
-  loadData();
+  await loadData();
   await loadQuestions();
   renderStats();
   renderGapAnalysis();
