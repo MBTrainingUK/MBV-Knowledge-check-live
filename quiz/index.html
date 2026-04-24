@@ -706,7 +706,7 @@ function saveAndFinish() {
   } catch(e) { console.warn('Storage error', e); }
 
   // Also attempt POST to a configurable endpoint
-  const endpoint = window.MBV_SUBMIT_ENDPOINT || null;
+  const endpoint = window.MBV_SUBMIT_ENDPOINT || 'https://script.google.com/macros/s/AKfycbzV0YTUEFU0bqaNqF_Uy-usj52moJl1xlywveL-IlDhQKKkyFP67GtJVb524KPn5ZuP/exec';
   if (endpoint) {
     fetch(endpoint, {
       method:  'POST',
