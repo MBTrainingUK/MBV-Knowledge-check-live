@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MBV Knowledge Check</title>
+  <style>
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --mbv-blue:    #003D8F;
+      --mbv-silver:  #C0C0C0;
+      --mbv-light:   #E8EEF7;
+      --mbv-dark:    #1A1A2E;
+      --mbv-accent:  #0055B3;
+      --mbv-green:   #28A745;
+      --mbv-gold:    #FFC107;
+      --radius:      10px;
+      --shadow:      0 4px 24px rgba(0,61,143,0.10);
+    }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: var(--mbv-light);
+      color: var(--mbv-dark);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* ── Header ── */
+    header {
+      width: 100%;
+      background: var(--mbv-blue);
+      color: #fff;
+      padding: 18px 32px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    header .logo {
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: #fff;
+    }
+    header .logo span { color: var(--mbv-gold); }
+    header .tagline {
+      font-size: 0.78rem;
+      opacity: 0.75;
+      letter-spacing: 0.5px;
+    }
+
+    /* ── Progress Bar ── */
+    #progress-wrap {
+      width: 100%;
+      background: var(--mbv-blue);
+      padding: 0 32px 14px;
+    }
+    #progress-bar-bg {
+      width: 100%;
+      height: 6px;
+      background: rgba(255,255,255,0.25);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    #progress-bar-fill {
+      height: 100%;
+      background: var(--mbv-gold);
+      border-radius: 3px;
+      transition: width 0.4s ease;
+      width: 0%;
+    }
+    #progress-label {
+      color: rgba(255,255,255,0.8);
+      font-size: 0.72rem;
+      margin-top: 5px;
+      letter-spacing: 0.4px;
+    }
+
+    /* ── Main Card ── */
+    main {
+      width: 100%;
+      max-width: 680px;
+      margin: 32px auto 48px;
+      padding: 0 16px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 36px 40px;
+      animation: fadeUp 0.35s ease;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Welcome Screen ── */
+    .welcome-badge {
+      display: inline-block;
+      background: var(--mbv-light);
+      color: var(--mbv-blue);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 18px;
+    }
+    .card h1 {
+      font-size: 1.7rem;
+      color: var(--mbv-blue);
+      margin-bottom: 10px;
+      line-height: 1.25;
+    }
+    .card .subtitle {
+      font-size: 0.97rem;
+      color: #555;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .info-item {
+      background: var(--mbv-light);
+      border-radius: 8px;
+      padding: 12px 16px;
+    }
+    .info-item .label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--mbv-blue);
+      margin-bottom: 3px;
+    }
+    .info-item .value {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--mbv-dark);
+    }
+    .prize-banner {
+      background: linear-gradient(135deg, #FFF8E1 0%, #FFF3CD 100%);
+      border: 1.5px solid var(--mbv-gold);
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .prize-banner .icon { font-size: 1.6rem; }
+    .prize-banner p { font-size: 0.88rem; color: #7A5800; line-height: 1.5; }
+    .prize-banner strong { color: #5A3E00; }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-block;
+      padding: 13px 32px;
+      border-radius: 8px;
+      font-size: 0.97rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+    .btn-primary {
+      background: var(--mbv-blue);
+      color: #fff;
+    }
+    .btn-primary:hover { background: var(--mbv-accent); transform: translateY(-1px); }
+    .btn-secondary {
+      background: var(--mbv-light);
+      color: var(--mbv-blue);
+      border: 2px solid var(--mbv-blue);
+    }
+    .btn-secondary:hover { background: var(--mbv-blue); color: #fff; }
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+    /* ── Stage Divider ── */
+    .stage-header {
+      background: var(--mbv-blue);
+      color: #fff;
+      border-radius: var(--radius);
+      padding: 20px 28px;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+    .stage-header .stage-label {
+      font-size: 0.72rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      opacity: 0.75;
+      margin-bottom: 4px;
+    }
+    .stage-header h2 { font-size: 1.15rem; }
+    .stage-header p { font-size: 0.85rem; opacity: 0.85; margin-top: 6px; line-height: 1.5; }
+
+    /* ── Question ── */
+    .question-number {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--mbv-blue);
+      margin-bottom: 10px;
+    }
+    .question-text {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--mbv-dark);
+      margin-bottom: 22px;
+      line-height: 1.55;
+    }
+
+    /* MCQ Options */
+    .options-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .option-btn {
+      width: 100%;
+      text-align: left;
+      padding: 13px 18px;
+      border: 2px solid #D8E2F0;
+      border-radius: 8px;
+      background: #fff;
+      font-size: 0.93rem;
+      cursor: pointer;
+      transition: all 0.18s;
+      line-height: 1.45;
+      color: var(--mbv-dark);
+    }
+    .option-btn:hover:not(:disabled) {
+      border-color: var(--mbv-blue);
+      background: var(--mbv-light);
+    }
+    .option-btn.selected {
+      border-color: var(--mbv-blue);
+      background: var(--mbv-light);
+      color: var(--mbv-blue);
+      font-weight: 600;
+    }
+    .option-btn:disabled { cursor: default; }
+
+    /* Open text */
+    textarea {
+      width: 100%;
+      min-height: 130px;
+      border: 2px solid #D8E2F0;
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-family: inherit;
+      font-size: 0.93rem;
+      color: var(--mbv-dark);
+      resize: vertical;
+      transition: border-color 0.2s;
+      line-height: 1.55;
+    }
+    textarea:focus { outline: none; border-color: var(--mbv-blue); }
+    .char-count { font-size: 0.72rem; color: #999; margin-top: 5px; text-align: right; }
+
+    /* ── Nav ── */
+    .nav-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 28px;
+      gap: 12px;
+    }
+    .nav-row .skip-hint {
+      font-size: 0.75rem;
+      color: #999;
+    }
+
+    /* ── Name screen ── */
+    .input-group { margin-bottom: 18px; }
+    .input-group label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--mbv-blue);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+    .input-group input {
+      width: 100%;
+      padding: 11px 16px;
+      border: 2px solid #D8E2F0;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      color: var(--mbv-dark);
+      transition: border-color 0.2s;
+    }
+    .input-group input:focus { outline: none; border-color: var(--mbv-blue); }
+
+    /* ── Thank you screen ── */
+    .thankyou-icon { font-size: 3.5rem; margin-bottom: 16px; text-align: center; }
+    .thankyou-title { text-align: center; color: var(--mbv-blue); font-size: 1.6rem; margin-bottom: 8px; }
+    .thankyou-sub { text-align: center; color: #555; font-size: 0.95rem; margin-bottom: 24px; line-height: 1.6; }
+    .summary-box {
+      background: var(--mbv-light);
+      border-radius: 8px;
+      padding: 18px 22px;
+      margin-bottom: 20px;
+    }
+    .summary-box h3 { color: var(--mbv-blue); font-size: 0.9rem; margin-bottom: 10px; }
+    .summary-box p { font-size: 0.87rem; color: #444; line-height: 1.6; }
+
+    /* ── Footer ── */
+    footer {
+      width: 100%;
+      text-align: center;
+      padding: 16px;
+      font-size: 0.72rem;
+      color: #aaa;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 520px) {
+      .card { padding: 24px 20px; }
+      .info-grid { grid-template-columns: 1fr; }
+      header { padding: 14px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="logo">MB<span>V</span></div>
+    <div class="tagline">INTERNAL · Knowledge Check Pilot</div>
+  </div>
+</header>
+
+<div id="progress-wrap">
+  <div id="progress-bar-bg"><div id="progress-bar-fill"></div></div>
+  <div id="progress-label">Not started</div>
+</div>
+
+<main>
+  <div id="screen-container"></div>
+</main>
+
+<footer>MBV Internal Use Only · Product &amp; Competition Programme · &copy; 2026</footer>
+
+<!-- ── Templates ── -->
+
+<template id="tpl-welcome">
+  <div class="card">
+    <div class="welcome-badge">📋 Knowledge Check · 8-Week Review</div>
+    <h1>MBV Product &amp; Competition<br>Knowledge Check</h1>
+    <p class="subtitle">
+      Thanks for taking part in this initiative. This short check-in is designed to help us understand 
+      what's landed well from your training and where we can improve future sessions. 
+      It's not a test — there are no pass or fail scores.
+    </p>
+    <div class="info-grid">
+      <div class="info-item">
+        <div class="label">Cohort</div>
+        <div class="value" id="w-cohort">—</div>
+      </div>
+      <div class="info-item">
+        <div class="label">Questions</div>
+        <div class="value" id="w-total">—</div>
+      </div>
+      <div class="info-item">
+        <div class="label">Est. Time</div>
+        <div class="value">8 – 12 minutes</div>
+      </div>
+      <div class="info-item">
+        <div class="label">Format</div>
+        <div class="value">Multiple choice &amp; open</div>
+      </div>
+    </div>
+    <div class="prize-banner">
+      <div class="icon">🎁</div>
+      <p><strong>You could win a prize!</strong> Everyone who completes the full knowledge check will be entered into a prize draw. Winners will be notified by email.</p>
+    </div>
+    <button class="btn btn-primary" id="btn-start">Start Knowledge Check →</button>
+  </div>
+</template>
+
+<template id="tpl-name">
+  <div class="card">
+    <p class="question-number">Before we begin</p>
+    <p class="question-text">Just a couple of quick details so we can enter you into the prize draw.</p>
+    <div class="input-group">
+      <label for="input-name">Full Name</label>
+      <input type="text" id="input-name" placeholder="e.g. Sarah Jones" autocomplete="name" />
+    </div>
+    <div class="input-group">
+      <label for="input-email">Work Email Address</label>
+      <input type="email" id="input-email" placeholder="e.g. sarah.jones@mercedes-benz.com" autocomplete="email" />
+    </div>
+    <div class="input-group">
+      <label for="input-ma">Master Agent (MA)</label>
+      <input type="text" id="input-ma" placeholder="e.g. London South" />
+    </div>
+    <div class="nav-row">
+      <span></span>
+      <button class="btn btn-primary" id="btn-name-next">Continue →</button>
+    </div>
+  </div>
+</template>
+
+<template id="tpl-stage-intro">
+  <div class="card">
+    <div class="stage-header">
+      <div class="stage-label" id="si-label">Stage</div>
+      <h2 id="si-title">Stage Title</h2>
+      <p id="si-desc">Description</p>
+    </div>
+    <p class="subtitle" id="si-body"></p>
+    <div class="nav-row">
+      <span></span>
+      <button class="btn btn-primary" id="btn-stage-go">Let's go →</button>
+    </div>
+  </div>
+</template>
+
+<template id="tpl-mcq">
+  <div class="card">
+    <p class="question-number" id="q-number">Question X of Y</p>
+    <p class="question-text" id="q-text">Question text here</p>
+    <ul class="options-list" id="q-options"></ul>
+    <div class="nav-row">
+      <button class="btn btn-secondary" id="btn-prev" style="visibility:hidden">← Back</button>
+      <span class="skip-hint" id="skip-hint"></span>
+      <button class="btn btn-primary" id="btn-next" disabled>Next →</button>
+    </div>
+  </div>
+</template>
+
+<template id="tpl-open">
+  <div class="card">
+    <p class="question-number" id="q-number">Question X of Y</p>
+    <p class="question-text" id="q-text">Question text here</p>
+    <textarea id="q-textarea" placeholder="Type your answer here…" maxlength="1000"></textarea>
+    <div class="char-count"><span id="char-count">0</span> / 1000</div>
+    <div class="nav-row">
+      <button class="btn btn-secondary" id="btn-prev" style="visibility:hidden">← Back</button>
+      <span class="skip-hint">You can skip this if you prefer</span>
+      <button class="btn btn-primary" id="btn-next">Next →</button>
+    </div>
+  </div>
+</template>
+
+<template id="tpl-thankyou">
+  <div class="card">
+    <div class="thankyou-icon">🎉</div>
+    <h1 class="thankyou-title">Thank you, <span id="ty-name">there</span>!</h1>
+    <p class="thankyou-sub">
+      You've completed the MBV Knowledge Check. Your responses have been recorded and 
+      you've been entered into the prize draw. We'll be in touch if you're a winner!
+    </p>
+    <div class="summary-box">
+      <h3>📊 What happens next?</h3>
+      <p>
+        Your responses, along with those from other participants, will be reviewed by the 
+        Training &amp; Competence team. The insights will be used to shape future Product &amp; 
+        Competition programme content — not to report back to your line manager.
+      </p>
+    </div>
+    <div class="summary-box">
+      <h3>🙏 A note from the team</h3>
+      <p>
+        Your honest feedback makes a real difference. If you have any questions about this 
+        initiative, please reach out to your Van Training Champion or the T&amp;C team directly.
+      </p>
+    </div>
+    <div style="text-align:center; margin-top:24px;">
+      <p style="font-size:0.82rem; color:#aaa;">You may now close this window.</p>
+    </div>
+  </div>
+</template>
+
+<script>
+/* ═══════════════════════════════════════════════════
+   MBV Knowledge Check · Quiz Engine
+   ═══════════════════════════════════════════════════ */
+
+const QUESTIONS_FILE = 'questions.json';
+const STORAGE_KEY    = 'mbv_kc_responses';
+
+let DATA       = null;   // loaded JSON
+let ALL_QS     = [];     // flat ordered question list
+let CURRENT    = 0;      // index into ALL_QS (after name screen)
+let ANSWERS    = {};     // { questionId: answer }
+let PARTICIPANT = {};    // name / email / ma
+
+// Build flat question list: stage1 questions then stage2 questions
+// We insert virtual "stage-intro" items as separators
+function buildQuestionList(data) {
+  const list = [];
+  list.push({ type: '__stage_intro', stage: 1, data: data.stage1 });
+  data.stage1.questions.forEach(q => list.push({ type: q.type, stage: 1, data: q }));
+  list.push({ type: '__stage_intro', stage: 2, data: data.stage2 });
+  data.stage2.questions.forEach(q => list.push({ type: q.type, stage: 2, data: q }));
+  return list;
+}
+
+function totalQuestions(data) {
+  return data.stage1.questions.length + data.stage2.questions.length;
+}
+
+function realQIndex(idx) {
+  // count how many real questions have been passed up to idx
+  let count = 0;
+  for (let i = 0; i < idx; i++) {
+    if (ALL_QS[i].type !== '__stage_intro') count++;
+  }
+  return count;
+}
+
+/* ── Progress ── */
+function updateProgress() {
+  const total = totalQuestions(DATA);
+  const answered = Object.keys(ANSWERS).length;
+  const pct = total === 0 ? 0 : Math.round((answered / total) * 100);
+  document.getElementById('progress-bar-fill').style.width = pct + '%';
+  if (pct === 0) {
+    document.getElementById('progress-label').textContent = 'Not started';
+  } else if (pct === 100) {
+    document.getElementById('progress-label').textContent = 'All questions answered ✓';
+  } else {
+    document.getElementById('progress-label').textContent = `${answered} of ${total} questions answered`;
+  }
+}
+
+/* ── Screen renderer ── */
+function show(tplId) {
+  const tpl = document.getElementById(tplId);
+  const clone = tpl.content.cloneNode(true);
+  const container = document.getElementById('screen-container');
+  container.innerHTML = '';
+  container.appendChild(clone);
+}
+
+/* ── Screens ── */
+function showWelcome() {
+  show('tpl-welcome');
+  document.getElementById('w-cohort').textContent = DATA.cohort;
+  document.getElementById('w-total').textContent = totalQuestions(DATA) + ' questions';
+  document.getElementById('btn-start').addEventListener('click', showNameScreen);
+  updateProgress();
+}
+
+function showNameScreen() {
+  show('tpl-name');
+  document.getElementById('btn-name-next').addEventListener('click', () => {
+    const name  = document.getElementById('input-name').value.trim();
+    const email = document.getElementById('input-email').value.trim();
+    const ma    = document.getElementById('input-ma').value.trim();
+    if (!name || !email) {
+      alert('Please enter your name and email address to continue.');
+      return;
+    }
+    PARTICIPANT = { name, email, ma };
+    CURRENT = 0;
+    showQuestion(0);
+  });
+}
+
+function showStageIntro(item, idx) {
+  show('tpl-stage-intro');
+  const s = item.data;
+  document.getElementById('si-label').textContent = s.label;
+  document.getElementById('si-title').textContent = `${s.label}: ${item.stage === 1 ? 'Quick Questions' : 'Deeper Dive'}`;
+  document.getElementById('si-desc').textContent = s.description;
+  document.getElementById('si-body').textContent = item.stage === 1
+    ? `You'll answer ${DATA.stage1.questions.length} short multiple-choice questions.`
+    : `You'll answer ${DATA.stage2.questions.length} more detailed questions — a mix of multiple choice and open text.`;
+  document.getElementById('btn-stage-go').addEventListener('click', () => {
+    showQuestion(idx + 1);
+  });
+}
+
+function showQuestion(idx) {
+  CURRENT = idx;
+  if (idx >= ALL_QS.length) { showThankYou(); return; }
+  const item = ALL_QS[idx];
+  if (item.type === '__stage_intro') { showStageIntro(item, idx); return; }
+
+  const allReal = ALL_QS.filter(q => q.type !== '__stage_intro');
+  const qRealIdx = allReal.findIndex(q => q.data.id === item.data.id);
+  const total    = allReal.length;
+  const qNum     = qRealIdx + 1;
+
+  if (item.type === 'mcq') showMCQ(item.data, idx, qNum, total);
+  else                      showOpen(item.data, idx, qNum, total);
+}
+
+function showMCQ(q, idx, qNum, total) {
+  show('tpl-mcq');
+  document.getElementById('q-number').textContent = `Question ${qNum} of ${total}`;
+  document.getElementById('q-text').textContent   = q.text;
+
+  const list = document.getElementById('q-options');
+  const saved = ANSWERS[q.id];
+  let selected = saved !== undefined ? saved : null;
+
+  const nextBtn = document.getElementById('btn-next');
+  if (selected !== null) nextBtn.removeAttribute('disabled');
+
+  q.options.forEach((opt, i) => {
+    const li  = document.createElement('li');
+    const btn = document.createElement('button');
+    btn.className   = 'option-btn' + (selected === i ? ' selected' : '');
+    btn.textContent = opt;
+    btn.addEventListener('click', () => {
+      selected = i;
+      list.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      nextBtn.removeAttribute('disabled');
+      ANSWERS[q.id] = i;
+      updateProgress();
+    });
+    li.appendChild(btn);
+    list.appendChild(li);
+  });
+
+  setupNav(idx, nextBtn);
+}
+
+function showOpen(q, idx, qNum, total) {
+  show('tpl-open');
+  document.getElementById('q-number').textContent = `Question ${qNum} of ${total}`;
+  document.getElementById('q-text').textContent   = q.text;
+
+  const ta = document.getElementById('q-textarea');
+  const cc = document.getElementById('char-count');
+  if (ANSWERS[q.id]) ta.value = ANSWERS[q.id];
+  cc.textContent = ta.value.length;
+
+  ta.addEventListener('input', () => {
+    cc.textContent = ta.value.length;
+    ANSWERS[q.id] = ta.value;
+    updateProgress();
+  });
+
+  setupNav(idx, document.getElementById('btn-next'));
+}
+
+function setupNav(idx, nextBtn) {
+  const prevBtn = document.getElementById('btn-prev');
+
+  // Show back button only after first real question
+  const prevIdx = findPrev(idx);
+  if (prevIdx >= 0) {
+    prevBtn.style.visibility = 'visible';
+    prevBtn.addEventListener('click', () => showQuestion(prevIdx));
+  }
+
+  nextBtn.addEventListener('click', () => {
+    const isLast = idx === ALL_QS.length - 1;
+    if (isLast) { saveAndFinish(); }
+    else { showQuestion(idx + 1); }
+  });
+}
+
+function findPrev(idx) {
+  // find the nearest previous non-stage-intro item
+  for (let i = idx - 1; i >= 0; i--) {
+    if (ALL_QS[i].type !== '__stage_intro') return i;
+  }
+  return -1;
+}
+
+function showThankYou() {
+  saveAndFinish();
+}
+
+function saveAndFinish() {
+  // Build response object
+  const response = {
+    id:          crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(),
+    timestamp:   new Date().toISOString(),
+    cohort:      DATA.cohort,
+    training_date: DATA.training_date,
+    participant: PARTICIPANT,
+    answers:     ANSWERS,
+    questions_snapshot: ALL_QS
+      .filter(q => q.type !== '__stage_intro')
+      .map(q => ({ id: q.data.id, type: q.type, text: q.data.text }))
+  };
+
+  // Store in localStorage
+  try {
+    const existing = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    // replace if same participant already submitted
+    const filtered = existing.filter(r => r.participant.email !== PARTICIPANT.email);
+    filtered.push(response);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
+  } catch(e) { console.warn('Storage error', e); }
+
+  // Also attempt POST to a configurable endpoint
+  const endpoint = window.MBV_SUBMIT_ENDPOINT || null;
+  if (endpoint) {
+    fetch(endpoint, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(response)
+    }).catch(e => console.warn('Submit error', e));
+  }
+
+  show('tpl-thankyou');
+  document.getElementById('ty-name').textContent = PARTICIPANT.name.split(' ')[0];
+  document.getElementById('progress-bar-fill').style.width = '100%';
+  document.getElementById('progress-label').textContent = 'Completed ✓';
+}
+
+/* ── Init ── */
+async function init() {
+  try {
+    const res  = await fetch(QUESTIONS_FILE);
+    DATA       = await res.json();
+    ALL_QS     = buildQuestionList(DATA);
+    updateProgress();
+    showWelcome();
+  } catch (e) {
+    document.getElementById('screen-container').innerHTML =
+      `<div class="card"><h1 style="color:#c00">Unable to load questions</h1>
+       <p class="subtitle">Please ensure <strong>questions.json</strong> is in the same folder as this file and you are running via a local server (not file://).</p>
+       <p class="subtitle" style="margin-top:12px;font-size:0.8rem;color:#999;">${e.message}</p></div>`;
+  }
+}
+
+init();
+</script>
+</body>
+</html>

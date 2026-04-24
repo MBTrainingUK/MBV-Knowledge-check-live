@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MBV Knowledge Check – Admin Dashboard</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --blue:   #003D8F;
+      --light:  #E8EEF7;
+      --gold:   #FFC107;
+      --dark:   #1A1A2E;
+      --green:  #28A745;
+      --red:    #DC3545;
+    }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--light); color: var(--dark); min-height: 100vh; }
+
+    header {
+      background: var(--blue); color: #fff; padding: 16px 32px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    header .logo { font-size: 1.4rem; font-weight: 900; letter-spacing: 2px; }
+    header .logo span { color: var(--gold); }
+    header .subtitle { font-size: 0.75rem; opacity: 0.7; margin-top: 2px; }
+
+    .topbar { background: #fff; border-bottom: 1px solid #dde4ee; padding: 12px 32px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .topbar h1 { font-size: 1rem; color: var(--blue); flex: 1; }
+    .btn { padding: 8px 18px; border-radius: 6px; font-size: 0.82rem; font-weight: 700; cursor: pointer; border: none; transition: all 0.15s; }
+    .btn-primary { background: var(--blue); color: #fff; }
+    .btn-primary:hover { background: #0055b3; }
+    .btn-danger { background: var(--red); color: #fff; }
+    .btn-danger:hover { background: #a71d2a; }
+    .btn-outline { background: #fff; color: var(--blue); border: 2px solid var(--blue); }
+    .btn-outline:hover { background: var(--blue); color: #fff; }
+
+    main { padding: 24px 32px; max-width: 1200px; margin: 0 auto; }
+
+    /* Stats cards */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin-bottom: 28px; }
+    .stat-card { background: #fff; border-radius: 8px; padding: 16px 20px; box-shadow: 0 2px 10px rgba(0,61,143,0.07); }
+    .stat-card .label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 1px; color: #888; margin-bottom: 4px; }
+    .stat-card .value { font-size: 1.9rem; font-weight: 800; color: var(--blue); line-height: 1; }
+    .stat-card .sub { font-size: 0.72rem; color: #aaa; margin-top: 4px; }
+
+    /* Table */
+    .table-wrap { background: #fff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,61,143,0.07); overflow: hidden; }
+    .table-header { padding: 16px 20px; border-bottom: 1px solid #e8eef7; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    .table-header h2 { font-size: 0.9rem; color: var(--blue); }
+    #search-input { padding: 7px 12px; border: 1.5px solid #D8E2F0; border-radius: 6px; font-size: 0.82rem; width: 200px; }
+    #search-input:focus { outline: none; border-color: var(--blue); }
+
+    table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+    th { background: var(--light); color: var(--blue); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.8px; padding: 10px 14px; text-align: left; border-bottom: 2px solid #D8E2F0; cursor: pointer; user-select: none; white-space: nowrap; }
+    th:hover { background: #d0daf0; }
+    td { padding: 10px 14px; border-bottom: 1px solid #f0f3f8; vertical-align: top; }
+    tr:hover td { background: #f8faff; }
+    tr:last-child td { border-bottom: none; }
+
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+    .badge-complete { background: #d4edda; color: #155724; }
+    .badge-partial  { background: #fff3cd; color: #856404; }
+
+    .view-btn { font-size: 0.75rem; color: var(--blue); cursor: pointer; text-decoration: underline; background: none; border: none; padding: 0; }
+
+    /* Modal */
+    #modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.45); z-index: 100;
+      align-items: center; justify-content: center; padding: 20px;
+    }
+    #modal-overlay.open { display: flex; }
+    #modal-box {
+      background: #fff; border-radius: 10px; max-width: 700px; width: 100%;
+      max-height: 85vh; overflow-y: auto; padding: 28px 32px;
+    }
+    #modal-box h2 { color: var(--blue); font-size: 1rem; margin-bottom: 4px; }
+    #modal-box .meta { font-size: 0.75rem; color: #999; margin-bottom: 20px; }
+    .qa-item { margin-bottom: 18px; }
+    .qa-item .q { font-size: 0.78rem; font-weight: 700; color: var(--blue); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .qa-item .q-text { font-size: 0.88rem; color: #555; margin-bottom: 6px; line-height: 1.5; }
+    .qa-item .a { font-size: 0.9rem; color: var(--dark); background: var(--light); border-radius: 6px; padding: 8px 12px; line-height: 1.6; }
+    .qa-item .a.correct { background: #d4edda; color: #155724; }
+    .qa-item .a.incorrect { background: #f8d7da; color: #721c24; }
+    .modal-close { float: right; font-size: 1.3rem; cursor: pointer; color: #aaa; line-height: 1; }
+    .modal-close:hover { color: var(--dark); }
+
+    /* Gap analysis */
+    .gap-section { background: #fff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,61,143,0.07); padding: 20px 24px; margin-bottom: 24px; }
+    .gap-section h2 { font-size: 0.9rem; color: var(--blue); margin-bottom: 16px; }
+    .gap-bar-row { margin-bottom: 10px; }
+    .gap-bar-label { font-size: 0.78rem; color: #444; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 400px; }
+    .gap-bar-bg { background: #E8EEF7; border-radius: 4px; height: 16px; overflow: hidden; }
+    .gap-bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s; }
+    .gap-bar-stats { font-size: 0.7rem; color: #888; margin-top: 2px; }
+
+    .empty-state { text-align: center; padding: 48px 20px; color: #aaa; }
+    .empty-state .icon { font-size: 2.5rem; margin-bottom: 10px; }
+    .empty-state p { font-size: 0.88rem; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="logo">MB<span>V</span></div>
+    <div class="subtitle">Knowledge Check · Admin Dashboard · INTERNAL</div>
+  </div>
+  <div style="font-size:0.78rem; opacity:0.7;" id="header-cohort"></div>
+</header>
+
+<div class="topbar">
+  <h1>Response Tracker</h1>
+  <button class="btn btn-outline" id="btn-refresh">🔄 Refresh</button>
+  <button class="btn btn-primary" id="btn-export-csv">⬇ Export CSV</button>
+  <button class="btn btn-danger" id="btn-clear" style="margin-left:auto;">🗑 Clear All Data</button>
+</div>
+
+<main>
+
+  <!-- Stats -->
+  <div class="stats-grid" id="stats-grid">
+    <div class="stat-card"><div class="label">Total Responses</div><div class="value" id="stat-total">0</div><div class="sub">participants</div></div>
+    <div class="stat-card"><div class="label">Completion Rate</div><div class="value" id="stat-rate">—</div><div class="sub">full survey</div></div>
+    <div class="stat-card"><div class="label">MCQ Correct Rate</div><div class="value" id="stat-mcq">—</div><div class="sub">avg across MCQ Qs</div></div>
+    <div class="stat-card"><div class="label">Open Q Responses</div><div class="value" id="stat-open">—</div><div class="sub">avg answered</div></div>
+    <div class="stat-card"><div class="label">Latest Response</div><div class="value" id="stat-latest" style="font-size:1rem; margin-top:4px;">—</div><div class="sub"></div></div>
+  </div>
+
+  <!-- Gap Analysis -->
+  <div class="gap-section" id="gap-section" style="display:none;">
+    <h2>📊 MCQ Knowledge Gap Analysis</h2>
+    <p style="font-size:0.78rem; color:#888; margin-bottom:16px;">Percentage of participants who answered each MCQ question correctly. Lower scores indicate knowledge gaps.</p>
+    <div id="gap-bars"></div>
+  </div>
+
+  <!-- Responses Table -->
+  <div class="table-wrap">
+    <div class="table-header">
+      <h2>Individual Responses</h2>
+      <input type="text" id="search-input" placeholder="Search by name, email or MA…" />
+    </div>
+    <div id="table-container">
+      <div class="empty-state">
+        <div class="icon">📭</div>
+        <p>No responses yet.<br>Responses will appear here once participants complete the Knowledge Check.</p>
+        <p style="margin-top:10px; font-size:0.75rem;">
+          <strong>Note:</strong> Responses are stored in the browser's localStorage. 
+          For production use, connect a backend endpoint via <code>window.MBV_SUBMIT_ENDPOINT</code> in the quiz.
+        </p>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- Modal -->
+<div id="modal-overlay">
+  <div id="modal-box">
+    <span class="modal-close" id="modal-close">✕</span>
+    <h2 id="modal-name">Participant</h2>
+    <div class="meta" id="modal-meta"></div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY   = 'mbv_kc_responses';
+const QUESTIONS_FILE = '../quiz/questions.json';
+
+let allResponses = [];
+let questionsData = null;   // full questions.json
+let questionIndex = {};     // id → full question object (with options + correct)
+let sortField = 'timestamp';
+let sortDir = -1;
+
+function loadData() {
+  try {
+    allResponses = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+  } catch(e) { allResponses = []; }
+}
+
+async function loadQuestions() {
+  try {
+    const res = await fetch(QUESTIONS_FILE);
+    questionsData = await res.json();
+    questionIndex = {};
+    [...questionsData.stage1.questions, ...questionsData.stage2.questions].forEach(q => {
+      questionIndex[q.id] = q;
+    });
+  } catch(e) {
+    console.warn('Could not load questions.json – answers will show as option indices.', e);
+  }
+}
+
+function formatDate(iso) {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  return d.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' }) +
+         ' ' + d.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
+}
+
+function getMCQs(resp) {
+  if (!resp.questions_snapshot) return [];
+  return resp.questions_snapshot.filter(q => q.type === 'mcq');
+}
+function getOpens(resp) {
+  if (!resp.questions_snapshot) return [];
+  return resp.questions_snapshot.filter(q => q.type === 'open');
+}
+
+// Returns { correct, total } for MCQ questions in this response
+function mcqScore(resp) {
+  const mcqs = getMCQs(resp);
+  let correct = 0, answered = 0;
+  mcqs.forEach(q => {
+    const selected = resp.answers[q.id];
+    if (selected === undefined || selected === null) return;
+    answered++;
+    const master = questionIndex[q.id];
+    if (master && master.correct === selected) correct++;
+  });
+  return { correct, answered, total: mcqs.length };
+}
+
+function renderStats() {
+  const total = allResponses.length;
+  document.getElementById('stat-total').textContent = total;
+
+  if (total === 0) {
+    document.getElementById('stat-rate').textContent = '—';
+    document.getElementById('stat-mcq').textContent = '—';
+    document.getElementById('stat-open').textContent = '—';
+    document.getElementById('stat-latest').textContent = '—';
+    return;
+  }
+
+  // Completion = answered at least 80% of questions
+  const completed = allResponses.filter(r => {
+    const total_qs = (r.questions_snapshot || []).length;
+    const answered = Object.keys(r.answers || {}).length;
+    return total_qs > 0 && (answered / total_qs) >= 0.8;
+  });
+  document.getElementById('stat-rate').textContent = Math.round((completed.length / total) * 100) + '%';
+
+  // MCQ correct rate (uses questions.json if loaded, else answered rate)
+  let mcqCorrect = 0, mcqPossible = 0;
+  allResponses.forEach(r => {
+    const s = mcqScore(r);
+    mcqCorrect  += s.correct;
+    mcqPossible += s.total;
+  });
+  document.getElementById('stat-mcq').textContent = mcqPossible > 0
+    ? Math.round((mcqCorrect / mcqPossible) * 100) + '%'
+    : '—';
+
+  // Open Q completion
+  let openTotal = 0, openAnswered = 0;
+  allResponses.forEach(r => {
+    getOpens(r).forEach(q => {
+      openTotal++;
+      if (r.answers[q.id] && r.answers[q.id].trim()) openAnswered++;
+    });
+  });
+  const openAvg = openTotal > 0 ? (openAnswered / allResponses.length).toFixed(1) : '—';
+  document.getElementById('stat-open').textContent = openAvg;
+
+  const latest = allResponses.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp))[0];
+  document.getElementById('stat-latest').textContent = formatDate(latest.timestamp).split(' ').slice(0,2).join(' ');
+
+  if (allResponses[0]?.cohort) {
+    document.getElementById('header-cohort').textContent = allResponses[0].cohort;
+  }
+}
+
+function renderGapAnalysis() {
+  const section = document.getElementById('gap-section');
+  if (allResponses.length === 0) { section.style.display = 'none'; return; }
+
+  // Collect all MCQ question IDs — use questionIndex if available, else snapshot
+  const mcqMap = {}; // id → { text, correct_idx, correctCount, answeredCount }
+  allResponses.forEach(r => {
+    getMCQs(r).forEach(q => {
+      if (!mcqMap[q.id]) {
+        const master = questionIndex[q.id];
+        mcqMap[q.id] = {
+          text:         q.text,
+          correct_idx:  master ? master.correct : null,
+          options:      master ? master.options : null,
+          correctCount: 0,
+          answeredCount: 0
+        };
+      }
+      const selected = r.answers[q.id];
+      if (selected !== undefined && selected !== null) {
+        mcqMap[q.id].answeredCount++;
+        if (mcqMap[q.id].correct_idx !== null && selected === mcqMap[q.id].correct_idx) {
+          mcqMap[q.id].correctCount++;
+        }
+      }
+    });
+  });
+
+  const ids = Object.keys(mcqMap);
+  if (ids.length === 0) { section.style.display = 'none'; return; }
+
+  section.style.display = 'block';
+  const container = document.getElementById('gap-bars');
+  container.innerHTML = '';
+
+  // Update subtitle based on whether we have correctness data
+  const hasCorrectness = ids.some(id => mcqMap[id].correct_idx !== null);
+  document.querySelector('#gap-section > p').textContent = hasCorrectness
+    ? 'Percentage of participants who answered each MCQ correctly. Lower scores = knowledge gaps to address.'
+    : 'Percentage of participants who answered each MCQ. questions.json not loaded — showing participation only.';
+
+  ids.forEach(id => {
+    const info = mcqMap[id];
+    const total = allResponses.length;
+    const hasCorrect = info.correct_idx !== null;
+    const pct = total > 0
+      ? Math.round((hasCorrect ? info.correctCount : info.answeredCount) / total * 100)
+      : 0;
+    const color = pct >= 80 ? '#28A745' : pct >= 50 ? '#FFC107' : '#DC3545';
+
+    const correctText = info.options
+      ? `Correct answer: "${info.options[info.correct_idx]}"`
+      : '';
+
+    const div = document.createElement('div');
+    div.className = 'gap-bar-row';
+    div.innerHTML = `
+      <div class="gap-bar-label" title="${info.text}">${info.text.length > 90 ? info.text.slice(0,90) + '…' : info.text}</div>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <div class="gap-bar-bg" style="flex:1;">
+          <div class="gap-bar-fill" style="width:${pct}%; background:${color};"></div>
+        </div>
+        <span style="font-size:0.75rem; font-weight:700; color:${color}; min-width:40px; text-align:right;">${pct}%</span>
+      </div>
+      <div class="gap-bar-stats">
+        ${hasCorrect
+          ? `${info.correctCount} of ${info.answeredCount} answered correctly · ${total - info.answeredCount} skipped`
+          : `${info.answeredCount} of ${total} participants answered`}
+        ${correctText ? ` · <em style="color:#888;">${correctText}</em>` : ''}
+      </div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function renderTable(filter = '') {
+  const container = document.getElementById('table-container');
+  const filtered = allResponses.filter(r => {
+    const hay = [
+      r.participant?.name, r.participant?.email, r.participant?.ma, r.cohort
+    ].join(' ').toLowerCase();
+    return hay.includes(filter.toLowerCase());
+  });
+
+  if (filtered.length === 0) {
+    container.innerHTML = `<div class="empty-state"><div class="icon">📭</div>
+      <p>${filter ? 'No results match your search.' : 'No responses yet.'}</p></div>`;
+    return;
+  }
+
+  const sorted = [...filtered].sort((a,b) => {
+    let av = a[sortField] || (a.participant?.[sortField]) || '';
+    let bv = b[sortField] || (b.participant?.[sortField]) || '';
+    if (typeof av === 'string') av = av.toLowerCase();
+    if (typeof bv === 'string') bv = bv.toLowerCase();
+    return av < bv ? sortDir : av > bv ? -sortDir : 0;
+  });
+
+  const cols = [
+    { key: 'name',      label: 'Name',        fn: r => r.participant?.name || '—' },
+    { key: 'email',     label: 'Email',       fn: r => r.participant?.email || '—' },
+    { key: 'ma',        label: 'MA',          fn: r => r.participant?.ma || '—' },
+    { key: 'cohort',    label: 'Cohort',      fn: r => r.cohort || '—' },
+    { key: 'timestamp', label: 'Submitted',   fn: r => formatDate(r.timestamp) },
+    { key: 'status',    label: 'Status',      fn: r => {
+      const total_qs = (r.questions_snapshot || []).length;
+      const answered = Object.keys(r.answers || {}).length;
+      const pct = total_qs > 0 ? answered / total_qs : 0;
+      return pct >= 0.8
+        ? '<span class="badge badge-complete">Complete</span>'
+        : '<span class="badge badge-partial">Partial</span>';
+    }},
+    { key: 'view', label: '', fn: (r, i) =>
+      `<button class="view-btn" data-idx="${i}">View responses</button>` }
+  ];
+
+  let html = '<table><thead><tr>';
+  cols.forEach(c => {
+    if (c.key === 'view') { html += `<th></th>`; return; }
+    const arrow = sortField === c.key ? (sortDir === 1 ? ' ↑' : ' ↓') : '';
+    html += `<th data-sort="${c.key}">${c.label}${arrow}</th>`;
+  });
+  html += '</tr></thead><tbody>';
+
+  sorted.forEach((r, i) => {
+    html += '<tr>';
+    cols.forEach(c => {
+      html += `<td>${c.fn(r, i)}</td>`;
+    });
+    html += '</tr>';
+  });
+
+  html += '</tbody></table>';
+  container.innerHTML = html;
+
+  // Sort headers
+  container.querySelectorAll('th[data-sort]').forEach(th => {
+    th.addEventListener('click', () => {
+      const field = th.getAttribute('data-sort');
+      if (sortField === field) sortDir *= -1;
+      else { sortField = field; sortDir = 1; }
+      renderTable(document.getElementById('search-input').value);
+    });
+  });
+
+  // View buttons
+  container.querySelectorAll('.view-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = parseInt(btn.getAttribute('data-idx'));
+      openModal(sorted[idx]);
+    });
+  });
+}
+
+function openModal(resp) {
+  document.getElementById('modal-name').textContent = resp.participant?.name || 'Participant';
+
+  const score = mcqScore(resp);
+  const scoreTxt = score.total > 0
+    ? ` · MCQ: ${score.correct}/${score.total} correct`
+    : '';
+  document.getElementById('modal-meta').textContent =
+    `${resp.participant?.email || ''} · ${resp.participant?.ma || ''} · Submitted ${formatDate(resp.timestamp)} · ${resp.cohort || ''}${scoreTxt}`;
+
+  const body = document.getElementById('modal-body');
+  body.innerHTML = '';
+
+  if (!resp.questions_snapshot || resp.questions_snapshot.length === 0) {
+    body.innerHTML = '<p style="color:#aaa;">No question data available.</p>';
+    document.getElementById('modal-overlay').classList.add('open');
+    return;
+  }
+
+  resp.questions_snapshot.forEach((q, i) => {
+    const div = document.createElement('div');
+    div.className = 'qa-item';
+    const ans = resp.answers[q.id];
+    const master = questionIndex[q.id]; // full question with options + correct
+
+    let ansHtml = '';
+    if (ans === undefined || ans === null || ans === '') {
+      ansHtml = '<div class="a" style="color:#aaa;font-style:italic;">Not answered</div>';
+    } else if (q.type === 'open') {
+      ansHtml = `<div class="a">${ans.replace(/\n/g, '<br>')}</div>`;
+    } else {
+      // MCQ — show actual option text if available
+      const selectedText = master?.options ? master.options[ans] : `Option ${parseInt(ans) + 1}`;
+      const isCorrect = master ? (master.correct === ans) : null;
+      const cssClass  = isCorrect === true ? 'correct' : isCorrect === false ? 'incorrect' : '';
+      const icon      = isCorrect === true ? '✅ ' : isCorrect === false ? '❌ ' : '';
+      ansHtml = `<div class="a ${cssClass}">${icon}${selectedText}</div>`;
+
+      // If wrong, also show the correct answer
+      if (isCorrect === false && master?.options) {
+        ansHtml += `<div style="font-size:0.78rem; color:#155724; background:#d4edda; border-radius:6px; padding:6px 12px; margin-top:4px;">
+          ✅ Correct answer: ${master.options[master.correct]}
+        </div>`;
+      }
+    }
+
+    div.innerHTML = `
+      <div class="q">Q${i+1} · ${q.type === 'mcq' ? 'Multiple Choice' : 'Open-Ended'}</div>
+      <div class="q-text">${q.text}</div>
+      ${ansHtml}
+    `;
+    body.appendChild(div);
+  });
+
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+document.getElementById('modal-close').addEventListener('click', () => {
+  document.getElementById('modal-overlay').classList.remove('open');
+});
+document.getElementById('modal-overlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('modal-overlay'))
+    document.getElementById('modal-overlay').classList.remove('open');
+});
+
+// Export CSV
+document.getElementById('btn-export-csv').addEventListener('click', () => {
+  if (allResponses.length === 0) { alert('No responses to export.'); return; }
+
+  // Collect all question IDs
+  const qIds = [];
+  const qTexts = {};
+  allResponses.forEach(r => {
+    (r.questions_snapshot || []).forEach(q => {
+      if (!qIds.includes(q.id)) { qIds.push(q.id); qTexts[q.id] = q.text; }
+    });
+  });
+
+  const headers = ['Name', 'Email', 'MA', 'Cohort', 'Submitted', ...qIds.map(id => qTexts[id])];
+  const rows = allResponses.map(r => [
+    r.participant?.name || '',
+    r.participant?.email || '',
+    r.participant?.ma || '',
+    r.cohort || '',
+    r.timestamp || '',
+    ...qIds.map(id => {
+      const a = r.answers?.[id];
+      if (a === undefined || a === null) return '';
+      if (typeof a === 'number') {
+        const master = questionIndex[id];
+        return master?.options ? master.options[a] : `Option ${a+1}`;
+      }
+      return String(a).replace(/\n/g, ' ');
+    })
+  ]);
+
+  const csv = [headers, ...rows].map(row =>
+    row.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')
+  ).join('\n');
+
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `MBV_KnowledgeCheck_Responses_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+document.getElementById('btn-refresh').addEventListener('click', () => render());
+
+document.getElementById('btn-clear').addEventListener('click', () => {
+  if (confirm('Are you sure you want to delete ALL response data? This cannot be undone.')) {
+    localStorage.removeItem(STORAGE_KEY);
+    render();
+  }
+});
+
+document.getElementById('search-input').addEventListener('input', e => {
+  renderTable(e.target.value);
+});
+
+async function render() {
+  loadData();
+  await loadQuestions();
+  renderStats();
+  renderGapAnalysis();
+  renderTable(document.getElementById('search-input').value);
+}
+
+render();
+</script>
+</body>
+</html>

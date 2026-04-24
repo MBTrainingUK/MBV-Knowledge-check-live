@@ -1,0 +1,138 @@
+{
+  "cohort": "Cohort 1 – May 2026",
+  "training_date": "26/27 May 2026",
+  "check_date": "22 July 2026",
+  "stage1": {
+    "label": "Stage 1",
+    "description": "A few quick questions to get started – these should feel familiar!",
+    "questions": [
+      {
+        "id": "s1q1",
+        "type": "mcq",
+        "text": "Which of the following is a key benefit of MBV's van range over a standard passenger vehicle conversion?",
+        "options": [
+          "Lower fuel consumption in all conditions",
+          "Purpose-built load floor and increased payload capacity",
+          "Smaller turning circle for urban delivery",
+          "Lower list price across all variants"
+        ],
+        "correct": 1
+      },
+      {
+        "id": "s1q2",
+        "type": "mcq",
+        "text": "Which MBV van model sits in the large van segment?",
+        "options": [
+          "Vito",
+          "Citan",
+          "Sprinter",
+          "eVito Tourer"
+        ],
+        "correct": 2
+      },
+      {
+        "id": "s1q3",
+        "type": "mcq",
+        "text": "Which feature is standard across the MBV Sprinter range and is a key differentiator vs competitors?",
+        "options": [
+          "Rear-wheel steering",
+          "MBUX infotainment system",
+          "Air suspension as standard",
+          "Panoramic roof"
+        ],
+        "correct": 1
+      },
+      {
+        "id": "s1q4",
+        "type": "mcq",
+        "text": "What does the 'e' prefix signify in models such as the eSprinter and eVito?",
+        "options": [
+          "Enhanced performance engine",
+          "Fully electric powertrain",
+          "Economy fuel variant",
+          "Extended wheelbase version"
+        ],
+        "correct": 1
+      },
+      {
+        "id": "s1q5",
+        "type": "mcq",
+        "text": "Which competitor is most frequently identified as MBV's primary rival in the large van segment?",
+        "options": [
+          "Ford Transit",
+          "VW Crafter",
+          "Vauxhall Movano",
+          "Renault Master"
+        ],
+        "correct": 0
+      },
+      {
+        "id": "s1q6",
+        "type": "mcq",
+        "text": "When speaking to a customer about total cost of ownership, which of the following should you highlight as an MBV advantage?",
+        "options": [
+          "Lower upfront list price vs all competitors",
+          "Residual values and long-term reliability reducing overall fleet costs",
+          "Free servicing for the first 3 years",
+          "No road tax on any MBV van"
+        ],
+        "correct": 1
+      },
+      {
+        "id": "s1q7",
+        "type": "mcq",
+        "text": "Which body style is available on the Vito that is NOT typically offered by all direct competitors?",
+        "options": [
+          "Panel van",
+          "Crew van (mixed-use)",
+          "Chassis cab",
+          "Tipper"
+        ],
+        "correct": 1
+      }
+    ]
+  },
+  "stage2": {
+    "label": "Stage 2",
+    "description": "These questions are a little more in-depth. We're looking for your honest thoughts – there are no wrong answers here.",
+    "questions": [
+      {
+        "id": "s2q1",
+        "type": "open",
+        "text": "In your own words, how would you explain the key advantages of the MBV eSprinter to a customer who is considering switching from a diesel large van?"
+      },
+      {
+        "id": "s2q2",
+        "type": "open",
+        "text": "Describe a situation (real or hypothetical) where you would use a competitor comparison to support a customer's buying decision. Which competitor would you focus on and why?"
+      },
+      {
+        "id": "s2q3",
+        "type": "open",
+        "text": "What aspect of the Product & Competition training did you find most useful in your day-to-day role, and how have you applied it?"
+      },
+      {
+        "id": "s2q4",
+        "type": "open",
+        "text": "Is there any area of MBV's product range or a specific competitor that you feel you need more knowledge or support on? Please describe."
+      },
+      {
+        "id": "s2q5",
+        "type": "mcq",
+        "text": "A fleet customer asks you to compare the Sprinter against the Ford Transit on payload. Which of the following is the most accurate and useful response?",
+        "options": [
+          "The Sprinter always has a higher payload than the Transit",
+          "Payload varies by body style and configuration – I'd recommend we look at the specific variants that match your use case",
+          "They are identical in payload capacity",
+          "The Transit has a higher payload on all variants"
+        ],
+        "correct": 1
+      },
+      {
+        "id": "s2q6",
+        "type": "open",
+        "text": "What do you think could be improved about the Product & Competition training programme itself? Your feedback will directly shape future sessions."
+      }
+    ]
+  }
+}
