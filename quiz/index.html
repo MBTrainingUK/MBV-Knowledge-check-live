@@ -5,503 +5,172 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MBV Knowledge Check</title>
   <style>
-    /* ── Reset & Base ── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --mbv-blue:    #003D8F;
-      --mbv-silver:  #C0C0C0;
-      --mbv-light:   #E8EEF7;
-      --mbv-dark:    #1A1A2E;
-      --mbv-accent:  #0055B3;
-      --mbv-green:   #28A745;
-      --mbv-gold:    #FFC107;
-      --radius:      10px;
-      --shadow:      0 4px 24px rgba(0,61,143,0.10);
+      --bg:       #1a1a2e;
+      --bg2:      #16213e;
+      --gold:     #ffc107;
+      --white:    #ffffff;
+      --k-red:    #e21b3c;
+      --k-blue:   #1368ce;
+      --k-yellow: #d89e00;
+      --k-green:  #26890c;
+      --radius: 12px;
     }
 
-    body {
-      font-family: 'Segoe UI', Arial, sans-serif;
-      background: var(--mbv-light);
-      color: var(--mbv-dark);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+    html, body { height: 100%; font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--white); overflow-x: hidden; }
 
-    /* ── Header ── */
-    header {
-      width: 100%;
-      background: var(--mbv-blue);
-      color: #fff;
-      padding: 18px 32px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-    header .logo {
-      font-size: 1.6rem;
-      font-weight: 800;
-      letter-spacing: 2px;
-      color: #fff;
-    }
-    header .logo span { color: var(--mbv-gold); }
-    header .tagline {
-      font-size: 0.78rem;
-      opacity: 0.75;
-      letter-spacing: 0.5px;
-    }
+    header { background: rgba(0,0,0,0.45); border-bottom: 2px solid rgba(255,193,7,0.3); padding: 10px 24px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; backdrop-filter: blur(8px); }
+    .logo { font-size: 1.5rem; font-weight: 900; letter-spacing: 3px; }
+    .logo span { color: var(--gold); }
+    .header-sub { font-size: 0.7rem; opacity: 0.5; letter-spacing: 1px; text-transform: uppercase; }
 
-    /* ── Progress Bar ── */
-    #progress-wrap {
-      width: 100%;
-      background: var(--mbv-blue);
-      padding: 0 32px 14px;
-    }
-    #progress-bar-bg {
-      width: 100%;
-      height: 6px;
-      background: rgba(255,255,255,0.25);
-      border-radius: 3px;
-      overflow: hidden;
-    }
-    #progress-bar-fill {
-      height: 100%;
-      background: var(--mbv-gold);
-      border-radius: 3px;
-      transition: width 0.4s ease;
-      width: 0%;
-    }
-    #progress-label {
-      color: rgba(255,255,255,0.8);
-      font-size: 0.72rem;
-      margin-top: 5px;
-      letter-spacing: 0.4px;
-    }
+    #progress-wrap { background: rgba(0,0,0,0.3); padding: 8px 24px 10px; }
+    #progress-bar-bg { height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
+    #progress-bar-fill { height: 100%; background: var(--gold); border-radius: 4px; transition: width 0.5s ease; width: 0%; }
+    #progress-label { font-size: 0.68rem; color: rgba(255,255,255,0.5); margin-top: 4px; letter-spacing: 0.5px; }
 
-    /* ── Main Card ── */
-    main {
-      width: 100%;
-      max-width: 680px;
-      margin: 32px auto 48px;
-      padding: 0 16px;
-    }
+    main { max-width: 800px; margin: 0 auto; padding: 16px 16px 48px; }
 
-    .card {
-      background: #fff;
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 36px 40px;
-      animation: fadeUp 0.35s ease;
-    }
+    @keyframes fadeUp  { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes popIn   { from { opacity:0; transform:scale(0.85); } to { opacity:1; transform:scale(1); } }
+    @keyframes slideIn { from { opacity:0; transform:translateX(-30px); } to { opacity:1; transform:translateX(0); } }
+    @keyframes pulse   { 0%,100%{transform:scale(1)} 50%{transform:scale(1.04)} }
+    @keyframes correct { 0%{transform:scale(1)} 30%{transform:scale(1.08)} 100%{transform:scale(1)} }
+    @keyframes shake   { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)} 40%{transform:translateX(8px)} 60%{transform:translateX(-6px)} 80%{transform:translateX(6px)} }
 
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(16px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
+    .welcome-wrap { text-align: center; padding: 24px 8px; animation: fadeUp 0.5s ease; }
+    .welcome-logo { font-size: 4rem; font-weight: 900; letter-spacing: 6px; margin-bottom: 4px; }
+    .welcome-logo span { color: var(--gold); }
+    .welcome-tag { font-size: 0.75rem; letter-spacing: 3px; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 28px; }
+    .welcome-title { font-size: 1.7rem; font-weight: 800; margin-bottom: 8px; line-height: 1.25; }
+    .welcome-sub { font-size: 0.9rem; color: rgba(255,255,255,0.65); margin-bottom: 28px; line-height: 1.6; max-width: 480px; margin-left: auto; margin-right: auto; }
 
-    /* ── Welcome Screen ── */
-    .welcome-badge {
-      display: inline-block;
-      background: var(--mbv-light);
-      color: var(--mbv-blue);
-      font-size: 0.72rem;
-      font-weight: 700;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      padding: 4px 12px;
-      border-radius: 20px;
-      margin-bottom: 18px;
-    }
-    .card h1 {
-      font-size: 1.7rem;
-      color: var(--mbv-blue);
-      margin-bottom: 10px;
-      line-height: 1.25;
-    }
-    .card .subtitle {
-      font-size: 0.97rem;
-      color: #555;
-      margin-bottom: 20px;
-      line-height: 1.6;
-    }
-    .info-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 24px;
-    }
-    .info-item {
-      background: var(--mbv-light);
-      border-radius: 8px;
-      padding: 12px 16px;
-    }
-    .info-item .label {
-      font-size: 0.7rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      color: var(--mbv-blue);
-      margin-bottom: 3px;
-    }
-    .info-item .value {
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: var(--mbv-dark);
-    }
-    .prize-banner {
-      background: linear-gradient(135deg, #FFF8E1 0%, #FFF3CD 100%);
-      border: 1.5px solid var(--mbv-gold);
-      border-radius: 8px;
-      padding: 14px 18px;
-      margin-bottom: 28px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .prize-banner .icon { font-size: 1.6rem; }
-    .prize-banner p { font-size: 0.88rem; color: #7A5800; line-height: 1.5; }
-    .prize-banner strong { color: #5A3E00; }
+    .info-pills { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 24px; }
+    .pill { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); border-radius: 20px; padding: 6px 16px; font-size: 0.78rem; color: rgba(255,255,255,0.8); }
+    .pill strong { color: var(--gold); }
 
-    /* ── Buttons ── */
-    .btn {
-      display: inline-block;
-      padding: 13px 32px;
-      border-radius: 8px;
-      font-size: 0.97rem;
-      font-weight: 700;
-      cursor: pointer;
-      border: none;
-      transition: all 0.2s;
-      text-decoration: none;
-    }
-    .btn-primary {
-      background: var(--mbv-blue);
-      color: #fff;
-    }
-    .btn-primary:hover { background: var(--mbv-accent); transform: translateY(-1px); }
-    .btn-secondary {
-      background: var(--mbv-light);
-      color: var(--mbv-blue);
-      border: 2px solid var(--mbv-blue);
-    }
-    .btn-secondary:hover { background: var(--mbv-blue); color: #fff; }
-    .btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+    .prize-box { background: linear-gradient(135deg, rgba(255,193,7,0.15), rgba(255,193,7,0.05)); border: 1.5px solid rgba(255,193,7,0.4); border-radius: var(--radius); padding: 14px 20px; margin: 0 auto 28px; max-width: 440px; display: flex; align-items: center; gap: 12px; }
+    .prize-box .icon { font-size: 1.8rem; flex-shrink: 0; }
+    .prize-box p { font-size: 0.84rem; color: rgba(255,255,255,0.85); line-height: 1.5; text-align: left; }
+    .prize-box strong { color: var(--gold); }
 
-    /* ── Stage Divider ── */
-    .stage-header {
-      background: var(--mbv-blue);
-      color: #fff;
-      border-radius: var(--radius);
-      padding: 20px 28px;
-      margin-bottom: 24px;
-      text-align: center;
-    }
-    .stage-header .stage-label {
-      font-size: 0.72rem;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      opacity: 0.75;
-      margin-bottom: 4px;
-    }
-    .stage-header h2 { font-size: 1.15rem; }
-    .stage-header p { font-size: 0.85rem; opacity: 0.85; margin-top: 6px; line-height: 1.5; }
+    .btn { display: inline-block; padding: 13px 32px; border-radius: var(--radius); font-size: 1rem; font-weight: 800; cursor: pointer; border: none; transition: all 0.18s; letter-spacing: 0.3px; }
+    .btn-gold { background: var(--gold); color: #000; }
+    .btn-gold:hover { background: #f5b800; transform: translateY(-2px); box-shadow: 0 6px 24px rgba(255,193,7,0.35); }
+    .btn-ghost { background: rgba(255,255,255,0.1); color: #fff; border: 2px solid rgba(255,255,255,0.2); }
+    .btn-ghost:hover { background: rgba(255,255,255,0.18); }
+    .btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
 
-    /* ── Question ── */
-    .question-number {
-      font-size: 0.72rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: var(--mbv-blue);
-      margin-bottom: 10px;
-    }
-    .question-text {
-      font-size: 1.05rem;
-      font-weight: 600;
-      color: var(--mbv-dark);
-      margin-bottom: 22px;
-      line-height: 1.55;
-    }
+    .form-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius); padding: 28px 32px; max-width: 480px; margin: 24px auto 0; animation: fadeUp 0.4s ease; }
+    .form-card h2 { font-size: 1.1rem; margin-bottom: 4px; }
+    .form-card .sub { font-size: 0.82rem; color: rgba(255,255,255,0.5); margin-bottom: 24px; }
+    .field { margin-bottom: 16px; }
+    .field label { display: block; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--gold); margin-bottom: 6px; }
+    .field input { width: 100%; background: rgba(255,255,255,0.08); border: 1.5px solid rgba(255,255,255,0.15); border-radius: 8px; padding: 11px 14px; font-size: 0.95rem; color: #fff; font-family: inherit; transition: border-color 0.2s; }
+    .field input:focus { outline: none; border-color: var(--gold); background: rgba(255,255,255,0.12); }
+    .field input::placeholder { color: rgba(255,255,255,0.25); }
 
-    /* MCQ Options */
-    .options-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
-    .option-btn {
-      width: 100%;
-      text-align: left;
-      padding: 13px 18px;
-      border: 2px solid #D8E2F0;
-      border-radius: 8px;
-      background: #fff;
-      font-size: 0.93rem;
-      cursor: pointer;
-      transition: all 0.18s;
-      line-height: 1.45;
-      color: var(--mbv-dark);
-    }
-    .option-btn:hover:not(:disabled) {
-      border-color: var(--mbv-blue);
-      background: var(--mbv-light);
-    }
-    .option-btn.selected {
-      border-color: var(--mbv-blue);
-      background: var(--mbv-light);
-      color: var(--mbv-blue);
-      font-weight: 600;
-    }
-    .option-btn:disabled { cursor: default; }
+    .stage-intro { text-align: center; padding: 40px 20px; animation: popIn 0.5s cubic-bezier(.34,1.56,.64,1); }
+    .stage-badge { display: inline-block; background: var(--gold); color: #000; font-size: 0.72rem; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; padding: 5px 14px; border-radius: 20px; margin-bottom: 16px; }
+    .stage-intro h2 { font-size: 2rem; font-weight: 900; margin-bottom: 12px; }
+    .stage-intro p { font-size: 0.9rem; color: rgba(255,255,255,0.65); max-width: 400px; margin: 0 auto 28px; line-height: 1.6; }
+    .stage-count { font-size: 3.5rem; font-weight: 900; color: var(--gold); animation: pulse 1.2s ease infinite; margin-bottom: 8px; }
 
-    /* Open text */
-    textarea {
-      width: 100%;
-      min-height: 130px;
-      border: 2px solid #D8E2F0;
-      border-radius: 8px;
-      padding: 12px 16px;
-      font-family: inherit;
-      font-size: 0.93rem;
-      color: var(--mbv-dark);
-      resize: vertical;
-      transition: border-color 0.2s;
-      line-height: 1.55;
-    }
-    textarea:focus { outline: none; border-color: var(--mbv-blue); }
-    .char-count { font-size: 0.72rem; color: #999; margin-top: 5px; text-align: right; }
+    .q-image-wrap { width: 100%; height: 220px; border-radius: var(--radius); overflow: hidden; margin-bottom: 18px; position: relative; background: rgba(255,255,255,0.04); animation: fadeUp 0.4s ease; }
+    .q-image-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .q-image-none { display: flex; align-items: center; justify-content: center; font-size: 3rem; height: 100%; }
 
-    /* ── Nav ── */
-    .nav-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 28px;
-      gap: 12px;
-    }
-    .nav-row .skip-hint {
-      font-size: 0.75rem;
-      color: #999;
-    }
+    .q-number { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--gold); margin-bottom: 8px; animation: slideIn 0.3s ease; }
+    .q-text { font-size: 1.15rem; font-weight: 700; line-height: 1.45; margin-bottom: 22px; animation: fadeUp 0.35s ease 0.05s both; }
 
-    /* ── Name screen ── */
-    .input-group { margin-bottom: 18px; }
-    .input-group label {
-      display: block;
-      font-size: 0.82rem;
-      font-weight: 700;
-      color: var(--mbv-blue);
-      margin-bottom: 6px;
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-    }
-    .input-group input {
-      width: 100%;
-      padding: 11px 16px;
-      border: 2px solid #D8E2F0;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      font-family: inherit;
-      color: var(--mbv-dark);
-      transition: border-color 0.2s;
-    }
-    .input-group input:focus { outline: none; border-color: var(--mbv-blue); }
+    .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+    .opt-btn { position: relative; display: flex; align-items: center; gap: 12px; padding: 16px 18px; border: none; border-radius: var(--radius); font-size: 0.92rem; font-weight: 700; color: #fff; cursor: pointer; text-align: left; transition: transform 0.15s, filter 0.15s, box-shadow 0.15s; min-height: 70px; line-height: 1.35; animation: popIn 0.3s cubic-bezier(.34,1.56,.64,1) both; }
+    .opt-btn:nth-child(1) { background: var(--k-red);    animation-delay: 0.05s; }
+    .opt-btn:nth-child(2) { background: var(--k-blue);   animation-delay: 0.1s; }
+    .opt-btn:nth-child(3) { background: var(--k-yellow); animation-delay: 0.15s; }
+    .opt-btn:nth-child(4) { background: var(--k-green);  animation-delay: 0.2s; }
+    .opt-btn:hover:not(:disabled):not(.revealed) { transform: translateY(-3px) scale(1.02); box-shadow: 0 8px 24px rgba(0,0,0,0.4); filter: brightness(1.1); }
+    .opt-btn:active:not(:disabled) { transform: scale(0.97); }
+    .opt-btn .shape { font-size: 1.2rem; flex-shrink: 0; }
+    .opt-btn .opt-text { flex: 1; }
+    .opt-btn.revealed { cursor: default; }
+    .opt-btn.revealed.correct-ans { animation: correct 0.5s ease; filter: brightness(1.15); box-shadow: 0 0 0 4px #fff, 0 0 32px rgba(255,255,255,0.3); }
+    .opt-btn.revealed.wrong-ans   { filter: brightness(0.35); transform: scale(0.96); }
+    .opt-btn.revealed.was-selected.wrong-ans { animation: shake 0.4s ease; }
 
-    /* ── Thank you screen ── */
-    .thankyou-icon { font-size: 3.5rem; margin-bottom: 16px; text-align: center; }
-    .thankyou-title { text-align: center; color: var(--mbv-blue); font-size: 1.6rem; margin-bottom: 8px; }
-    .thankyou-sub { text-align: center; color: #555; font-size: 0.95rem; margin-bottom: 24px; line-height: 1.6; }
-    .summary-box {
-      background: var(--mbv-light);
-      border-radius: 8px;
-      padding: 18px 22px;
-      margin-bottom: 20px;
-    }
-    .summary-box h3 { color: var(--mbv-blue); font-size: 0.9rem; margin-bottom: 10px; }
-    .summary-box p { font-size: 0.87rem; color: #444; line-height: 1.6; }
+    .open-wrap { animation: fadeUp 0.4s ease; }
+    .open-wrap textarea { width: 100%; min-height: 140px; background: rgba(255,255,255,0.07); border: 2px solid rgba(255,255,255,0.15); border-radius: var(--radius); padding: 14px 16px; font-size: 0.95rem; color: #fff; font-family: inherit; resize: vertical; line-height: 1.6; transition: border-color 0.2s; }
+    .open-wrap textarea:focus { outline: none; border-color: var(--gold); }
+    .open-wrap textarea::placeholder { color: rgba(255,255,255,0.25); }
+    .char-count { font-size: 0.7rem; color: rgba(255,255,255,0.35); text-align: right; margin-top: 5px; }
 
-    /* ── Footer ── */
-    footer {
-      width: 100%;
-      text-align: center;
-      padding: 16px;
-      font-size: 0.72rem;
-      color: #aaa;
-    }
+    .feedback-banner { border-radius: var(--radius); padding: 14px 18px; margin-bottom: 16px; font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; gap: 10px; animation: popIn 0.3s cubic-bezier(.34,1.56,.64,1); }
+    .feedback-banner.correct   { background: rgba(38,137,12,0.25); border: 2px solid var(--k-green); }
+    .feedback-banner.incorrect { background: rgba(226,27,60,0.2);  border: 2px solid var(--k-red); }
+    .feedback-banner .fb-icon  { font-size: 1.4rem; }
 
-    /* ── Responsive ── */
+    .nav-row { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; gap: 12px; }
+    .skip-hint { font-size: 0.72rem; color: rgba(255,255,255,0.35); }
+
+    .thankyou-wrap { text-align: center; padding: 32px 16px; animation: fadeUp 0.5s ease; }
+    .thankyou-icon { font-size: 4rem; margin-bottom: 16px; animation: popIn 0.5s cubic-bezier(.34,1.56,.64,1) 0.2s both; }
+    .thankyou-wrap h1 { font-size: 2rem; font-weight: 900; margin-bottom: 8px; }
+    .thankyou-wrap .sub { font-size: 0.92rem; color: rgba(255,255,255,0.65); max-width: 440px; margin: 0 auto 24px; line-height: 1.6; }
+    .ty-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-width: 480px; margin: 0 auto 24px; }
+    .ty-card { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); border-radius: var(--radius); padding: 16px; text-align: left; }
+    .ty-card .tc-icon { font-size: 1.4rem; margin-bottom: 6px; }
+    .ty-card h3 { font-size: 0.8rem; color: var(--gold); font-weight: 700; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .ty-card p { font-size: 0.78rem; color: rgba(255,255,255,0.6); line-height: 1.5; }
+
+    #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999; }
+
+    footer { text-align: center; padding: 16px; font-size: 0.65rem; color: rgba(255,255,255,0.2); border-top: 1px solid rgba(255,255,255,0.05); }
+
     @media (max-width: 520px) {
-      .card { padding: 24px 20px; }
-      .info-grid { grid-template-columns: 1fr; }
-      header { padding: 14px 20px; }
+      .options-grid { grid-template-columns: 1fr; }
+      .ty-cards { grid-template-columns: 1fr; }
+      .q-image-wrap { height: 160px; }
+      .welcome-logo { font-size: 2.8rem; }
+      .q-text { font-size: 1rem; }
+      .form-card { padding: 20px 16px; }
     }
   </style>
 </head>
 <body>
 
+<canvas id="confetti-canvas"></canvas>
+
 <header>
   <div>
     <div class="logo">MB<span>V</span></div>
-    <div class="tagline">INTERNAL · Knowledge Check Pilot</div>
+    <div class="header-sub">Knowledge Check · Internal</div>
   </div>
+  <div id="header-right" style="font-size:0.78rem; color:rgba(255,255,255,0.4);"></div>
 </header>
 
 <div id="progress-wrap">
   <div id="progress-bar-bg"><div id="progress-bar-fill"></div></div>
-  <div id="progress-label">Not started</div>
+  <div id="progress-label">Ready to start</div>
 </div>
 
-<main>
-  <div id="screen-container"></div>
-</main>
+<main id="screen-container"></main>
 
-<footer>MBV Internal Use Only · Product &amp; Competition Programme · &copy; 2026</footer>
-
-<!-- ── Templates ── -->
-
-<template id="tpl-welcome">
-  <div class="card">
-    <div class="welcome-badge">📋 Knowledge Check · 8-Week Review</div>
-    <h1>MBV Product &amp; Competition<br>Knowledge Check</h1>
-    <p class="subtitle">
-      Thanks for taking part in this initiative. This short check-in is designed to help us understand 
-      what's landed well from your training and where we can improve future sessions. 
-      It's not a test — there are no pass or fail scores.
-    </p>
-    <div class="info-grid">
-      <div class="info-item">
-        <div class="label">Cohort</div>
-        <div class="value" id="w-cohort">—</div>
-      </div>
-      <div class="info-item">
-        <div class="label">Questions</div>
-        <div class="value" id="w-total">—</div>
-      </div>
-      <div class="info-item">
-        <div class="label">Est. Time</div>
-        <div class="value">8 – 12 minutes</div>
-      </div>
-      <div class="info-item">
-        <div class="label">Format</div>
-        <div class="value">Multiple choice &amp; open</div>
-      </div>
-    </div>
-    <div class="prize-banner">
-      <div class="icon">🎁</div>
-      <p><strong>You could win a prize!</strong> Everyone who completes the full knowledge check will be entered into a prize draw. Winners will be notified by email.</p>
-    </div>
-    <button class="btn btn-primary" id="btn-start">Start Knowledge Check →</button>
-  </div>
-</template>
-
-<template id="tpl-name">
-  <div class="card">
-    <p class="question-number">Before we begin</p>
-    <p class="question-text">Just a couple of quick details so we can enter you into the prize draw.</p>
-    <div class="input-group">
-      <label for="input-name">Full Name</label>
-      <input type="text" id="input-name" placeholder="e.g. Sarah Jones" autocomplete="name" />
-    </div>
-    <div class="input-group">
-      <label for="input-email">Work Email Address</label>
-      <input type="email" id="input-email" placeholder="e.g. sarah.jones@mercedes-benz.com" autocomplete="email" />
-    </div>
-    <div class="input-group">
-      <label for="input-ma">Master Agent (MA)</label>
-      <input type="text" id="input-ma" placeholder="e.g. London South" />
-    </div>
-    <div class="nav-row">
-      <span></span>
-      <button class="btn btn-primary" id="btn-name-next">Continue →</button>
-    </div>
-  </div>
-</template>
-
-<template id="tpl-stage-intro">
-  <div class="card">
-    <div class="stage-header">
-      <div class="stage-label" id="si-label">Stage</div>
-      <h2 id="si-title">Stage Title</h2>
-      <p id="si-desc">Description</p>
-    </div>
-    <p class="subtitle" id="si-body"></p>
-    <div class="nav-row">
-      <span></span>
-      <button class="btn btn-primary" id="btn-stage-go">Let's go →</button>
-    </div>
-  </div>
-</template>
-
-<template id="tpl-mcq">
-  <div class="card">
-    <p class="question-number" id="q-number">Question X of Y</p>
-    <p class="question-text" id="q-text">Question text here</p>
-    <ul class="options-list" id="q-options"></ul>
-    <div class="nav-row">
-      <button class="btn btn-secondary" id="btn-prev" style="visibility:hidden">← Back</button>
-      <span class="skip-hint" id="skip-hint"></span>
-      <button class="btn btn-primary" id="btn-next" disabled>Next →</button>
-    </div>
-  </div>
-</template>
-
-<template id="tpl-open">
-  <div class="card">
-    <p class="question-number" id="q-number">Question X of Y</p>
-    <p class="question-text" id="q-text">Question text here</p>
-    <textarea id="q-textarea" placeholder="Type your answer here…" maxlength="1000"></textarea>
-    <div class="char-count"><span id="char-count">0</span> / 1000</div>
-    <div class="nav-row">
-      <button class="btn btn-secondary" id="btn-prev" style="visibility:hidden">← Back</button>
-      <span class="skip-hint">You can skip this if you prefer</span>
-      <button class="btn btn-primary" id="btn-next">Next →</button>
-    </div>
-  </div>
-</template>
-
-<template id="tpl-thankyou">
-  <div class="card">
-    <div class="thankyou-icon">🎉</div>
-    <h1 class="thankyou-title">Thank you, <span id="ty-name">there</span>!</h1>
-    <p class="thankyou-sub">
-      You've completed the MBV Knowledge Check. Your responses have been recorded and 
-      you've been entered into the prize draw. We'll be in touch if you're a winner!
-    </p>
-    <div class="summary-box">
-      <h3>📊 What happens next?</h3>
-      <p>
-        Your responses, along with those from other participants, will be reviewed by the 
-        Training &amp; Competence team. The insights will be used to shape future Product &amp; 
-        Competition programme content — not to report back to your line manager.
-      </p>
-    </div>
-    <div class="summary-box">
-      <h3>🙏 A note from the team</h3>
-      <p>
-        Your honest feedback makes a real difference. If you have any questions about this 
-        initiative, please reach out to your Van Training Champion or the T&amp;C team directly.
-      </p>
-    </div>
-    <div style="text-align:center; margin-top:24px;">
-      <p style="font-size:0.82rem; color:#aaa;">You may now close this window.</p>
-    </div>
-  </div>
-</template>
+<footer>MBV Internal Use Only · Product &amp; Competition Programme · © 2026</footer>
 
 <script>
-/* ═══════════════════════════════════════════════════
-   MBV Knowledge Check · Quiz Engine
-   ═══════════════════════════════════════════════════ */
-
 const QUESTIONS_FILE = 'questions.json';
-const STORAGE_KEY    = 'mbv_kc_responses';
+const WEBHOOK = 'https://script.google.com/macros/s/AKfycbzV0YTUEFU0bqaNqF_Uy-usj52moJl1xlywveL-IlDhQKKkyFP67GtJVb524KPn5ZuP/exec';
+const SHAPES  = ['▲','◆','●','■'];
 
-let DATA       = null;   // loaded JSON
-let ALL_QS     = [];     // flat ordered question list
-let CURRENT    = 0;      // index into ALL_QS (after name screen)
-let ANSWERS    = {};     // { questionId: answer }
-let PARTICIPANT = {};    // name / email / ma
+let DATA        = null;
+let ALL_QS      = [];
+let CURRENT     = 0;
+let ANSWERS     = {};
+let PARTICIPANT = {};
+let REVEALED    = false;
 
-// Build flat question list: stage1 questions then stage2 questions
-// We insert virtual "stage-intro" items as separators
 function buildQuestionList(data) {
   const list = [];
   list.push({ type: '__stage_intro', stage: 1, data: data.stage1 });
@@ -511,230 +180,286 @@ function buildQuestionList(data) {
   return list;
 }
 
-function totalQuestions(data) {
-  return data.stage1.questions.length + data.stage2.questions.length;
-}
+function totalQ()    { return DATA.stage1.questions.length + DATA.stage2.questions.length; }
+function answeredQ() { return Object.keys(ANSWERS).length; }
 
-function realQIndex(idx) {
-  // count how many real questions have been passed up to idx
-  let count = 0;
-  for (let i = 0; i < idx; i++) {
-    if (ALL_QS[i].type !== '__stage_intro') count++;
-  }
-  return count;
-}
-
-/* ── Progress ── */
 function updateProgress() {
-  const total = totalQuestions(DATA);
-  const answered = Object.keys(ANSWERS).length;
-  const pct = total === 0 ? 0 : Math.round((answered / total) * 100);
+  const pct = totalQ() === 0 ? 0 : Math.round((answeredQ() / totalQ()) * 100);
   document.getElementById('progress-bar-fill').style.width = pct + '%';
-  if (pct === 0) {
-    document.getElementById('progress-label').textContent = 'Not started';
-  } else if (pct === 100) {
-    document.getElementById('progress-label').textContent = 'All questions answered ✓';
-  } else {
-    document.getElementById('progress-label').textContent = `${answered} of ${total} questions answered`;
-  }
+  document.getElementById('progress-label').textContent =
+    pct === 0   ? 'Ready to start' :
+    pct === 100 ? 'All done ✓' :
+    `${answeredQ()} of ${totalQ()} questions answered`;
 }
 
-/* ── Screen renderer ── */
-function show(tplId) {
-  const tpl = document.getElementById(tplId);
-  const clone = tpl.content.cloneNode(true);
-  const container = document.getElementById('screen-container');
-  container.innerHTML = '';
-  container.appendChild(clone);
+function setScreen(html) {
+  document.getElementById('screen-container').innerHTML = html;
 }
 
-/* ── Screens ── */
+/* WELCOME */
 function showWelcome() {
-  show('tpl-welcome');
-  document.getElementById('w-cohort').textContent = DATA.cohort;
-  document.getElementById('w-total').textContent = totalQuestions(DATA) + ' questions';
+  setScreen(`
+    <div class="welcome-wrap">
+      <div class="welcome-logo">MB<span>V</span></div>
+      <div class="welcome-tag">Product &amp; Competition · Knowledge Check</div>
+      <h1 class="welcome-title">8-Week Post-Training<br>Knowledge Check</h1>
+      <p class="welcome-sub">This isn't a test — there are no pass or fail scores. Your answers help us make future training even better.</p>
+      <div class="info-pills">
+        <div class="pill"><strong>${DATA.cohort}</strong></div>
+        <div class="pill"><strong>${totalQ()}</strong> questions</div>
+        <div class="pill">~8–12 mins</div>
+        <div class="pill">MCQ + open</div>
+      </div>
+      <div class="prize-box">
+        <div class="icon">🎁</div>
+        <p><strong>You could win a prize!</strong> Complete the full knowledge check to be entered into the prize draw. Winners notified by email.</p>
+      </div>
+      <button class="btn btn-gold" id="btn-start">Let's Go →</button>
+    </div>
+  `);
   document.getElementById('btn-start').addEventListener('click', showNameScreen);
   updateProgress();
 }
 
+/* NAME SCREEN */
 function showNameScreen() {
-  show('tpl-name');
+  setScreen(`
+    <div class="form-card">
+      <h2>Before we begin…</h2>
+      <p class="sub">Just a couple of details so we can enter you into the prize draw.</p>
+      <div class="field"><label>Full Name</label><input id="f-name" type="text" placeholder="e.g. Sarah Jones" autocomplete="name" /></div>
+      <div class="field"><label>Work Email</label><input id="f-email" type="email" placeholder="e.g. sarah.jones@mercedes-benz.com" /></div>
+      <div class="field"><label>Master Agent (MA)</label><input id="f-ma" type="text" placeholder="e.g. London South" /></div>
+      <div class="nav-row" style="margin-top:24px;"><span></span>
+        <button class="btn btn-gold" id="btn-name-next">Continue →</button>
+      </div>
+    </div>
+  `);
   document.getElementById('btn-name-next').addEventListener('click', () => {
-    const name  = document.getElementById('input-name').value.trim();
-    const email = document.getElementById('input-email').value.trim();
-    const ma    = document.getElementById('input-ma').value.trim();
-    if (!name || !email) {
-      alert('Please enter your name and email address to continue.');
-      return;
-    }
+    const name  = document.getElementById('f-name').value.trim();
+    const email = document.getElementById('f-email').value.trim();
+    const ma    = document.getElementById('f-ma').value.trim();
+    if (!name || !email) { alert('Please enter your name and email to continue.'); return; }
     PARTICIPANT = { name, email, ma };
+    document.getElementById('header-right').textContent = name.split(' ')[0];
     CURRENT = 0;
     showQuestion(0);
   });
 }
 
+/* STAGE INTRO */
 function showStageIntro(item, idx) {
-  show('tpl-stage-intro');
-  const s = item.data;
-  document.getElementById('si-label').textContent = s.label;
-  document.getElementById('si-title').textContent = `${s.label}: ${item.stage === 1 ? 'Quick Questions' : 'Deeper Dive'}`;
-  document.getElementById('si-desc').textContent = s.description;
-  document.getElementById('si-body').textContent = item.stage === 1
-    ? `You'll answer ${DATA.stage1.questions.length} short multiple-choice questions.`
-    : `You'll answer ${DATA.stage2.questions.length} more detailed questions — a mix of multiple choice and open text.`;
-  document.getElementById('btn-stage-go').addEventListener('click', () => {
-    showQuestion(idx + 1);
-  });
+  const s     = item.data;
+  const count = item.stage === 1 ? DATA.stage1.questions.length : DATA.stage2.questions.length;
+  setScreen(`
+    <div class="stage-intro">
+      <div class="stage-badge">${s.label}</div>
+      <div class="stage-count">${count}</div>
+      <p style="font-size:0.72rem;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">Questions</p>
+      <h2>${item.stage === 1 ? 'Quick-fire Questions' : 'Deeper Dive'}</h2>
+      <p>${s.description}</p>
+      <button class="btn btn-gold" id="btn-stage-go">Start ${s.label} →</button>
+    </div>
+  `);
+  document.getElementById('btn-stage-go').addEventListener('click', () => showQuestion(idx + 1));
 }
 
+/* QUESTION ROUTER */
 function showQuestion(idx) {
-  CURRENT = idx;
-  if (idx >= ALL_QS.length) { showThankYou(); return; }
+  CURRENT  = idx;
+  REVEALED = false;
+  if (idx >= ALL_QS.length) { saveAndFinish(); return; }
   const item = ALL_QS[idx];
   if (item.type === '__stage_intro') { showStageIntro(item, idx); return; }
-
   const allReal = ALL_QS.filter(q => q.type !== '__stage_intro');
-  const qRealIdx = allReal.findIndex(q => q.data.id === item.data.id);
-  const total    = allReal.length;
-  const qNum     = qRealIdx + 1;
-
-  if (item.type === 'mcq') showMCQ(item.data, idx, qNum, total);
-  else                      showOpen(item.data, idx, qNum, total);
+  const qNum    = allReal.findIndex(q => q.data.id === item.data.id) + 1;
+  if (item.type === 'mcq') showMCQ(item.data, idx, qNum, allReal.length);
+  else                      showOpen(item.data, idx, qNum, allReal.length);
 }
 
+/* MCQ */
 function showMCQ(q, idx, qNum, total) {
-  show('tpl-mcq');
-  document.getElementById('q-number').textContent = `Question ${qNum} of ${total}`;
-  document.getElementById('q-text').textContent   = q.text;
+  const imgHtml = q.image
+    ? `<div class="q-image-wrap"><img src="${q.image}" alt="Mercedes-Benz van" loading="lazy" /></div>`
+    : `<div class="q-image-wrap"><div class="q-image-none">🚐</div></div>`;
 
-  const list = document.getElementById('q-options');
+  const opts = q.options.map((opt, i) => `
+    <button class="opt-btn" data-idx="${i}">
+      <span class="shape">${SHAPES[i]}</span>
+      <span class="opt-text">${opt}</span>
+    </button>`).join('');
+
   const saved = ANSWERS[q.id];
-  let selected = saved !== undefined ? saved : null;
+  const prevIdx = findPrev(idx);
 
-  const nextBtn = document.getElementById('btn-next');
-  if (selected !== null) nextBtn.removeAttribute('disabled');
+  setScreen(`
+    <div>
+      ${imgHtml}
+      <div class="q-number">Question ${qNum} of ${total} · Stage ${ALL_QS[idx].stage}</div>
+      <div class="q-text">${q.text}</div>
+      <div class="options-grid" id="opts-grid">${opts}</div>
+      <div id="feedback-area"></div>
+      <div class="nav-row">
+        <button class="btn btn-ghost" id="btn-prev" style="visibility:${prevIdx >= 0 ? 'visible':'hidden'}">← Back</button>
+        <span></span>
+        <button class="btn btn-gold" id="btn-next" ${saved === undefined ? 'disabled' : ''}>Next →</button>
+      </div>
+    </div>
+  `);
 
-  q.options.forEach((opt, i) => {
-    const li  = document.createElement('li');
-    const btn = document.createElement('button');
-    btn.className   = 'option-btn' + (selected === i ? ' selected' : '');
-    btn.textContent = opt;
+  if (saved !== undefined) revealMCQ(q, saved, false);
+
+  document.querySelectorAll('.opt-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      selected = i;
-      list.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
-      nextBtn.removeAttribute('disabled');
-      ANSWERS[q.id] = i;
+      if (REVEALED) return;
+      const chosen = parseInt(btn.getAttribute('data-idx'));
+      ANSWERS[q.id] = chosen;
+      revealMCQ(q, chosen, true);
       updateProgress();
     });
-    li.appendChild(btn);
-    list.appendChild(li);
   });
 
-  setupNav(idx, nextBtn);
-}
-
-function showOpen(q, idx, qNum, total) {
-  show('tpl-open');
-  document.getElementById('q-number').textContent = `Question ${qNum} of ${total}`;
-  document.getElementById('q-text').textContent   = q.text;
-
-  const ta = document.getElementById('q-textarea');
-  const cc = document.getElementById('char-count');
-  if (ANSWERS[q.id]) ta.value = ANSWERS[q.id];
-  cc.textContent = ta.value.length;
-
-  ta.addEventListener('input', () => {
-    cc.textContent = ta.value.length;
-    ANSWERS[q.id] = ta.value;
-    updateProgress();
-  });
-
-  setupNav(idx, document.getElementById('btn-next'));
-}
-
-function setupNav(idx, nextBtn) {
+  document.getElementById('btn-next').addEventListener('click', () => showQuestion(idx + 1));
   const prevBtn = document.getElementById('btn-prev');
+  if (prevBtn && prevIdx >= 0) prevBtn.addEventListener('click', () => showQuestion(prevIdx));
+}
 
-  // Show back button only after first real question
-  const prevIdx = findPrev(idx);
-  if (prevIdx >= 0) {
-    prevBtn.style.visibility = 'visible';
-    prevBtn.addEventListener('click', () => showQuestion(prevIdx));
-  }
-
-  nextBtn.addEventListener('click', () => {
-    const isLast = idx === ALL_QS.length - 1;
-    if (isLast) { saveAndFinish(); }
-    else { showQuestion(idx + 1); }
+function revealMCQ(q, chosen, animate) {
+  REVEALED = true;
+  const isCorrect = chosen === q.correct;
+  document.querySelectorAll('.opt-btn').forEach((btn, i) => {
+    btn.classList.add('revealed');
+    btn.disabled = true;
+    if (i === q.correct)      btn.classList.add('correct-ans');
+    else {
+      btn.classList.add('wrong-ans');
+      if (i === chosen) btn.classList.add('was-selected');
+    }
   });
+  const fb = document.getElementById('feedback-area');
+  if (fb) {
+    fb.innerHTML = isCorrect
+      ? `<div class="feedback-banner correct"><span class="fb-icon">🎉</span><span>Correct! Well done.</span></div>`
+      : `<div class="feedback-banner incorrect"><span class="fb-icon">❌</span><span>The correct answer was: <strong>${q.options[q.correct]}</strong></span></div>`;
+  }
+  document.getElementById('btn-next').removeAttribute('disabled');
+  if (animate && isCorrect) launchConfetti();
+}
+
+/* OPEN */
+function showOpen(q, idx, qNum, total) {
+  const prevIdx = findPrev(idx);
+  setScreen(`
+    <div class="open-wrap">
+      <div class="q-number">Question ${qNum} of ${total} · Open-Ended</div>
+      <div class="q-text">${q.text}</div>
+      <textarea id="q-ta" placeholder="Type your answer here…" maxlength="1000">${ANSWERS[q.id] || ''}</textarea>
+      <div class="char-count"><span id="cc">${(ANSWERS[q.id] || '').length}</span> / 1000</div>
+      <div class="nav-row">
+        <button class="btn btn-ghost" id="btn-prev" style="visibility:${prevIdx >= 0 ? 'visible':'hidden'}">← Back</button>
+        <span class="skip-hint">You can skip if you prefer</span>
+        <button class="btn btn-gold" id="btn-next">Next →</button>
+      </div>
+    </div>
+  `);
+  const ta = document.getElementById('q-ta');
+  const cc = document.getElementById('cc');
+  ta.addEventListener('input', () => { ANSWERS[q.id] = ta.value; cc.textContent = ta.value.length; updateProgress(); });
+  document.getElementById('btn-next').addEventListener('click', () => showQuestion(idx + 1));
+  const prevBtn = document.getElementById('btn-prev');
+  if (prevBtn && prevIdx >= 0) prevBtn.addEventListener('click', () => showQuestion(prevIdx));
 }
 
 function findPrev(idx) {
-  // find the nearest previous non-stage-intro item
   for (let i = idx - 1; i >= 0; i--) {
     if (ALL_QS[i].type !== '__stage_intro') return i;
   }
   return -1;
 }
 
-function showThankYou() {
-  saveAndFinish();
-}
-
+/* SAVE & THANK YOU */
 function saveAndFinish() {
-  // Build response object
   const response = {
-    id:          crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(),
+    id:          (typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Date.now().toString()),
     timestamp:   new Date().toISOString(),
     cohort:      DATA.cohort,
     training_date: DATA.training_date,
     participant: PARTICIPANT,
     answers:     ANSWERS,
-    questions_snapshot: ALL_QS
-      .filter(q => q.type !== '__stage_intro')
-      .map(q => ({ id: q.data.id, type: q.type, text: q.data.text }))
+    questions_snapshot: ALL_QS.filter(q => q.type !== '__stage_intro').map(q => ({ id: q.data.id, type: q.type, text: q.data.text }))
   };
 
-  // Store in localStorage
   try {
-    const existing = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-    // replace if same participant already submitted
+    const existing = JSON.parse(localStorage.getItem('mbv_kc_responses') || '[]');
     const filtered = existing.filter(r => r.participant.email !== PARTICIPANT.email);
     filtered.push(response);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
-  } catch(e) { console.warn('Storage error', e); }
+    localStorage.setItem('mbv_kc_responses', JSON.stringify(filtered));
+  } catch(e) {}
 
-  // Also attempt POST to a configurable endpoint
-  const endpoint = window.MBV_SUBMIT_ENDPOINT || 'https://script.google.com/macros/s/AKfycbzV0YTUEFU0bqaNqF_Uy-usj52moJl1xlywveL-IlDhQKKkyFP67GtJVb524KPn5ZuP/exec';
-  if (endpoint) {
-    fetch(endpoint, {
-      method:  'POST',
-      mode:    'no-cors',
-      headers: { 'Content-Type': 'text/plain' },
-      body:    JSON.stringify(response)
-    }).catch(e => console.warn('Submit error', e));
-  }
+  fetch(WEBHOOK, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(response) })
+    .catch(e => console.warn('Submit error', e));
 
-  show('tpl-thankyou');
-  document.getElementById('ty-name').textContent = PARTICIPANT.name.split(' ')[0];
+  setScreen(`
+    <div class="thankyou-wrap">
+      <div class="thankyou-icon">🎉</div>
+      <h1>Thank you, ${PARTICIPANT.name.split(' ')[0]}!</h1>
+      <p class="sub">You've completed the MBV Knowledge Check and you're now entered into the prize draw. We'll be in touch if you're a winner!</p>
+      <div class="ty-cards">
+        <div class="ty-card"><div class="tc-icon">📊</div><h3>What happens next?</h3><p>Your responses will be reviewed by the T&C team to shape future P&C programme content.</p></div>
+        <div class="ty-card"><div class="tc-icon">🔒</div><h3>Your data</h3><p>Responses are not shared with your line manager and are used only to improve training.</p></div>
+      </div>
+      <p style="font-size:0.78rem;color:rgba(255,255,255,0.25);margin-top:12px;">You may now close this window.</p>
+    </div>
+  `);
+
   document.getElementById('progress-bar-fill').style.width = '100%';
   document.getElementById('progress-label').textContent = 'Completed ✓';
+  launchConfetti(5000);
 }
 
-/* ── Init ── */
+/* CONFETTI */
+function launchConfetti(duration = 1800) {
+  const canvas = document.getElementById('confetti-canvas');
+  const ctx    = canvas.getContext('2d');
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const colours = ['#ffc107','#e21b3c','#1368ce','#26890c','#fff','#ff6b6b','#4ecdc4'];
+  const pieces  = Array.from({ length: 120 }, () => ({
+    x: Math.random() * canvas.width, y: -10 - Math.random() * 80,
+    r: 4 + Math.random() * 6, d: 2 + Math.random() * 3,
+    color: colours[Math.floor(Math.random() * colours.length)],
+    tilt: 0, tiltAngle: 0, tiltAngleInc: 0.05 + Math.random() * 0.1
+  }));
+  const end = Date.now() + duration;
+  function frame() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    pieces.forEach(p => {
+      p.tiltAngle += p.tiltAngleInc; p.y += p.d; p.tilt = Math.sin(p.tiltAngle) * 12;
+      ctx.beginPath(); ctx.lineWidth = p.r; ctx.strokeStyle = p.color;
+      ctx.moveTo(p.x + p.tilt + p.r / 3, p.y); ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r); ctx.stroke();
+      if (p.y > canvas.height) { p.y = -10; p.x = Math.random() * canvas.width; }
+    });
+    if (Date.now() < end) requestAnimationFrame(frame);
+    else ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+  frame();
+}
+
+/* INIT */
 async function init() {
   try {
-    const res  = await fetch(QUESTIONS_FILE);
-    DATA       = await res.json();
-    ALL_QS     = buildQuestionList(DATA);
-    updateProgress();
+    const res = await fetch(QUESTIONS_FILE);
+    DATA   = await res.json();
+    ALL_QS = buildQuestionList(DATA);
     showWelcome();
-  } catch (e) {
-    document.getElementById('screen-container').innerHTML =
-      `<div class="card"><h1 style="color:#c00">Unable to load questions</h1>
-       <p class="subtitle">Please ensure <strong>questions.json</strong> is in the same folder as this file and you are running via a local server (not file://).</p>
-       <p class="subtitle" style="margin-top:12px;font-size:0.8rem;color:#999;">${e.message}</p></div>`;
+  } catch(e) {
+    document.getElementById('screen-container').innerHTML = `
+      <div style="padding:40px;text-align:center;">
+        <div style="font-size:2rem;margin-bottom:12px;">⚠️</div>
+        <h2 style="color:#ffc107;margin-bottom:8px;">Unable to load questions</h2>
+        <p style="color:rgba(255,255,255,0.5);font-size:0.85rem;">Ensure questions.json is in the same folder and you're running via a local server.</p>
+        <p style="color:rgba(255,255,255,0.3);font-size:0.75rem;margin-top:8px;">${e.message}</p>
+      </div>`;
   }
 }
 

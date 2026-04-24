@@ -9,6 +9,7 @@
       {
         "id": "s1q1",
         "type": "mcq",
+        "image": "https://api.media.mercedes-benz.com/jsonapi/image/deliver/13b1f674-469f-4b7a-8d71-ef59ebf2074a/1024",
         "text": "Which of the following is a key benefit of MBV's van range over a standard passenger vehicle conversion?",
         "options": [
           "Lower fuel consumption in all conditions",
@@ -21,6 +22,7 @@
       {
         "id": "s1q2",
         "type": "mcq",
+        "image": "https://api.media.mercedes-benz.com/jsonapi/image/deliver/71d18745-b3be-4241-b50c-8fae5d5c4f2a/1024",
         "text": "Which MBV van model sits in the large van segment?",
         "options": [
           "Vito",
@@ -33,6 +35,7 @@
       {
         "id": "s1q3",
         "type": "mcq",
+        "image": "https://api.media.mercedes-benz.com/jsonapi/image/deliver/5fa62c6c-43ed-4b71-9953-44eeaddc2cce/1024",
         "text": "Which feature is standard across the MBV Sprinter range and is a key differentiator vs competitors?",
         "options": [
           "Rear-wheel steering",
@@ -45,6 +48,7 @@
       {
         "id": "s1q4",
         "type": "mcq",
+        "image": "https://api.media.mercedes-benz.com/jsonapi/image/deliver/1211b0ca-d993-447a-8811-16495545267b/1024",
         "text": "What does the 'e' prefix signify in models such as the eSprinter and eVito?",
         "options": [
           "Enhanced performance engine",
@@ -57,6 +61,7 @@
       {
         "id": "s1q5",
         "type": "mcq",
+        "image": "https://api.media.mercedes-benz.com/jsonapi/image/deliver/4044a879-2bb4-4197-9f3f-235b4204a41a/1024",
         "text": "Which competitor is most frequently identified as MBV's primary rival in the large van segment?",
         "options": [
           "Ford Transit",
@@ -69,6 +74,7 @@
       {
         "id": "s1q6",
         "type": "mcq",
+        "image": "https://api.media.mercedes-benz.com/jsonapi/image/deliver/13b1f674-469f-4b7a-8d71-ef59ebf2074a/1024",
         "text": "When speaking to a customer about total cost of ownership, which of the following should you highlight as an MBV advantage?",
         "options": [
           "Lower upfront list price vs all competitors",
@@ -81,6 +87,7 @@
       {
         "id": "s1q7",
         "type": "mcq",
+        "image": "https://api.media.mercedes-benz.com/jsonapi/image/deliver/71d18745-b3be-4241-b50c-8fae5d5c4f2a/1024",
         "text": "Which body style is available on the Vito that is NOT typically offered by all direct competitors?",
         "options": [
           "Panel van",
@@ -119,6 +126,7 @@
       {
         "id": "s2q5",
         "type": "mcq",
+        "image": "https://api.media.mercedes-benz.com/jsonapi/image/deliver/5fa62c6c-43ed-4b71-9953-44eeaddc2cce/1024",
         "text": "A fleet customer asks you to compare the Sprinter against the Ford Transit on payload. Which of the following is the most accurate and useful response?",
         "options": [
           "The Sprinter always has a higher payload than the Transit",
