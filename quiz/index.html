@@ -4,9 +4,35 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MBV Knowledge Check</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    @font-face {
+      font-family: 'MBCorpoATitle';
+      src: url('../fonts/MBCorpoATitleOffice-Regular.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'MBCorpoSText';
+      src: url('../fonts/MBCorpoSTextOffice-Light.ttf') format('truetype');
+      font-weight: 300;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'MBCorpoSText';
+      src: url('../fonts/MBCorpoSTextOffice-Regular.ttf') format('truetype');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'MBCorpoSText';
+      src: url('../fonts/MBCorpoSTextOffice-Bold.ttf') format('truetype');
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
@@ -25,7 +51,7 @@
       --radius-lg: 8px;
     }
 
-    html, body { height: 100%; font-family: 'Inter', 'Segoe UI', Arial, sans-serif; background: var(--black); color: var(--white); overflow-x: hidden; }
+    html, body { height: 100%; font-family: 'MBCorpoSText', 'Segoe UI', Arial, sans-serif; background: var(--black); color: var(--white); overflow-x: hidden; }
 
     /* ── HEADER ── */
     header {
@@ -44,7 +70,7 @@
     .mb-star {
       width: 40px; height: 40px; flex-shrink: 0;
     }
-    .logo { font-size: 0.72rem; font-weight: 400; letter-spacing: 3px; text-transform: uppercase; color: var(--silver2); }
+    .logo { font-size: 0.72rem; font-weight: 400; letter-spacing: 3px; text-transform: uppercase; color: var(--silver2); font-family: 'MBCorpoSText', sans-serif; }
     .header-divider { width: 1px; height: 28px; background: var(--grey3); }
     .header-sub { font-size: 0.65rem; letter-spacing: 2px; text-transform: uppercase; color: var(--grey4); font-weight: 400; }
     #header-right { font-size: 0.72rem; color: var(--silver); letter-spacing: 1px; }
@@ -70,8 +96,8 @@
     .welcome-star { margin: 0 auto 20px; }
     .welcome-star svg { width: 72px; height: 72px; }
     .welcome-eyebrow { font-size: 0.65rem; letter-spacing: 4px; text-transform: uppercase; color: var(--silver); margin-bottom: 20px; font-weight: 400; }
-    .welcome-title { font-size: 2rem; font-weight: 300; margin-bottom: 12px; line-height: 1.25; letter-spacing: -0.5px; color: var(--white); }
-    .welcome-title strong { font-weight: 700; }
+    .welcome-title { font-size: 2rem; font-weight: 400; margin-bottom: 12px; line-height: 1.25; letter-spacing: 0; color: var(--white); font-family: 'MBCorpoATitle', serif; }
+    .welcome-title strong { font-weight: 400; font-family: 'MBCorpoATitle', serif; }
     .welcome-sub { font-size: 0.9rem; color: var(--silver); margin-bottom: 36px; line-height: 1.7; max-width: 460px; margin-left: auto; margin-right: auto; font-weight: 300; }
     .welcome-divider { width: 40px; height: 1px; background: var(--accent); margin: 0 auto 32px; }
 
@@ -109,7 +135,7 @@
     /* ── STAGE INTRO ── */
     .stage-intro { text-align: center; padding: 48px 20px; animation: fadeUp 0.4s ease; }
     .stage-badge { display: inline-block; background: transparent; color: var(--accent); font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 3px; padding: 6px 16px; border: 1px solid var(--accent); border-radius: 2px; margin-bottom: 24px; }
-    .stage-intro h2 { font-size: 1.8rem; font-weight: 300; margin-bottom: 12px; letter-spacing: -0.3px; }
+    .stage-intro h2 { font-size: 1.8rem; font-weight: 400; margin-bottom: 12px; letter-spacing: 0; font-family: 'MBCorpoATitle', serif; }
     .stage-intro p { font-size: 0.88rem; color: var(--silver); max-width: 400px; margin: 0 auto 32px; line-height: 1.7; font-weight: 300; }
     .stage-count { font-size: 4rem; font-weight: 200; color: var(--white); letter-spacing: -2px; margin-bottom: 4px; }
 
@@ -120,7 +146,7 @@
     .q-image-none svg { width: 48px; height: 48px; opacity: 0.2; }
 
     .q-number { font-size: 0.62rem; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; color: var(--accent); margin-bottom: 10px; animation: slideIn 0.3s ease; }
-    .q-text { font-size: 1.1rem; font-weight: 500; line-height: 1.5; margin-bottom: 24px; animation: fadeUp 0.35s ease 0.05s both; color: var(--white); }
+    .q-text { font-size: 1.1rem; font-weight: 400; line-height: 1.5; margin-bottom: 24px; animation: fadeUp 0.35s ease 0.05s both; color: var(--white); font-family: 'MBCorpoATitle', serif; }
 
     /* ── OPTIONS ── */
     .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
@@ -171,7 +197,7 @@
     .thankyou-wrap { text-align: center; padding: 40px 16px; animation: fadeUp 0.5s ease; }
     .thankyou-star { margin: 0 auto 24px; animation: popIn 0.5s ease 0.2s both; }
     .thankyou-star svg { width: 64px; height: 64px; }
-    .thankyou-wrap h1 { font-size: 1.8rem; font-weight: 300; margin-bottom: 10px; letter-spacing: -0.3px; }
+    .thankyou-wrap h1 { font-size: 1.8rem; font-weight: 400; margin-bottom: 10px; letter-spacing: 0; font-family: 'MBCorpoATitle', serif; }
     .thankyou-wrap .sub { font-size: 0.88rem; color: var(--silver); max-width: 440px; margin: 0 auto 32px; line-height: 1.7; font-weight: 300; }
     .ty-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-width: 480px; margin: 0 auto 24px; }
     .ty-card { background: var(--grey1); border: 1px solid var(--grey3); border-radius: var(--radius); padding: 18px; text-align: left; }
