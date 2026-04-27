@@ -227,12 +227,7 @@
 
 <header>
   <div class="logo-wrap">
-    <svg class="mb-star" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="50" cy="50" r="48" stroke="#b0b0b0" stroke-width="1.5" fill="none"/>
-      <path d="M50 8 L50 50 L85 72" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-      <path d="M50 8 L50 50 L15 72" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-      <path d="M85 72 L15 72" stroke="white" stroke-width="2.5" stroke-linecap="round" fill="none"/>
-    </svg>
+    <img class="mb-star" src="../images/MB-star_n_3Cweb.svg" alt="Mercedes-Benz Star" />
     <div class="header-divider"></div>
     <div>
       <div class="logo">Mercedes-Benz Vans</div>
@@ -293,12 +288,7 @@ function showWelcome() {
   setScreen(`
     <div class="welcome-wrap">
       <div class="welcome-star">
-        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="50" cy="50" r="48" stroke="#4a4a4a" stroke-width="1" fill="none"/>
-          <path d="M50 8 L50 50 L85 72" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-          <path d="M50 8 L50 50 L15 72" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-          <path d="M85 72 L15 72" stroke="white" stroke-width="2" stroke-linecap="round" fill="none"/>
-        </svg>
+        <img src="../images/MB-star_n_3Cweb.svg" alt="Mercedes-Benz Star" style="width:72px;height:72px;" />
       </div>
       <div class="welcome-eyebrow">Product &amp; Competition Programme</div>
       <h1 class="welcome-title">8-Week Post-Training<br><strong>Knowledge Check</strong></h1>
@@ -381,7 +371,7 @@ function showQuestion(idx) {
 function showMCQ(q, idx, qNum, total) {
   const imgHtml = q.image
     ? `<div class="q-image-wrap"><img src="${q.image}" alt="Mercedes-Benz van" loading="lazy" /></div>`
-    : `<div class="q-image-wrap"><div class="q-image-none"><svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:48px;height:48px;opacity:0.15"><circle cx="50" cy="50" r="48" stroke="white" stroke-width="1.5" fill="none"/><path d="M50 8 L50 50 L85 72" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M50 8 L50 50 L15 72" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M85 72 L15 72" stroke="white" stroke-width="2.5" stroke-linecap="round" fill="none"/></svg></div></div>`;
+    : `<div class="q-image-wrap"><div class="q-image-none"><img src="../images/MB-star_n_3Cweb.svg" alt="Mercedes-Benz" style="width:48px;height:48px;opacity:0.15;" /></div></div>`;
 
   const opts = q.options.map((opt, i) => `
     <button class="opt-btn" data-idx="${i}">
@@ -502,12 +492,7 @@ function saveAndFinish() {
   setScreen(`
     <div class="thankyou-wrap">
       <div class="thankyou-star">
-        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="50" cy="50" r="48" stroke="#c0a96b" stroke-width="1.5" fill="none"/>
-          <path d="M50 8 L50 50 L85 72" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-          <path d="M50 8 L50 50 L15 72" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-          <path d="M85 72 L15 72" stroke="white" stroke-width="2.5" stroke-linecap="round" fill="none"/>
-        </svg>
+        <img src="../images/MB-star_n_3Cweb.svg" alt="Mercedes-Benz Star" style="width:64px;height:64px;" />
       </div>
       <h1>Thank you, ${PARTICIPANT.name.split(' ')[0]}.</h1>
       <p class="sub">You've completed the MBV Knowledge Check and you're now entered into the prize draw. We'll be in touch if you're a winner!</p>
