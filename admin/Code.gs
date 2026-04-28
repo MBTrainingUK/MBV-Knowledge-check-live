@@ -102,14 +102,32 @@ function doGet(e) {
     const iScore     = header.indexOf('MCQ Score');
     const iPct       = header.indexOf('MCQ %');
 
+    // answer column indices for on-the-fly scoring (fallback for old rows)
+    const answerCols = {};
+    MCQ_IDS.forEach(id => { answerCols[id] = header.indexOf(`Q_${id}`); });
+
+    function calcScore(row) {
+      // prefer stored score column if it exists and is a valid number
+      if (iScore !== -1 && row[iScore] !== '' && row[iScore] !== null && !isNaN(Number(row[iScore]))) {
+        return { score: Number(row[iScore]), pct: Number(row[iPct]) };
+      }
+      // fall back to calculating from raw answer columns
+      let s = 0;
+      MCQ_IDS.forEach(id => {
+        const col = answerCols[id];
+        if (col !== -1 && parseInt(row[col]) === MCQ_ANSWERS[id]) s++;
+      });
+      return { score: s, pct: Math.round((s / MCQ_TOTAL) * 100) };
+    }
+
     // deduplicate by email — keep highest score, then earliest timestamp
     const map = {};
     data.forEach(row => {
       const email = row[iEmail];
       if (!email) return;
       const existing = map[email];
-      const score    = Number(row[iScore]);
-      const ts       = new Date(row[iTimestamp]);
+      const { score, pct } = calcScore(row);
+      const ts = new Date(row[iTimestamp]);
       if (!existing || score > existing.score || (score === existing.score && ts < new Date(existing.timestamp))) {
         map[email] = {
           id:        row[iId],
@@ -119,7 +137,7 @@ function doGet(e) {
           email:     email,
           dealer:    row[iDealer],
           score:     score,
-          pct:       Number(row[iPct])
+          pct:       pct
         };
       }
     });
