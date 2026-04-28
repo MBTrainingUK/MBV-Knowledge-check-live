@@ -90,6 +90,20 @@ function doGet(e) {
   try {
     const action = (e.parameter && e.parameter.action) || '';
 
+    if (action === 'responses') {
+      const ss2    = SpreadsheetApp.getActiveSpreadsheet();
+      const sheet2 = ss2.getSheetByName(SHEET_NAME);
+      if (!sheet2) {
+        return ContentService
+          .createTextOutput(JSON.stringify({ header: [], rows: [] }))
+          .setMimeType(ContentService.MimeType.JSON);
+      }
+      const allData = sheet2.getDataRange().getValues();
+      return ContentService
+        .createTextOutput(JSON.stringify({ header: allData[0], rows: allData.slice(1) }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
     if (action !== 'leaderboard') {
       return ContentService
         .createTextOutput(JSON.stringify({ status: 'ok' }))
@@ -162,14 +176,15 @@ function doGet(e) {
     // deduplicate by email — keep highest score, then earliest timestamp
     const map = {};
     data.forEach(row => {
+      if (row.every(cell => cell === '' || cell === null || cell === undefined)) return; // skip blank rows
       const isNew = rowIsNewFormat(row);
       // Read fields from the correct columns based on each row's own format
-      const email      = isNew ? row[iEmail]     : row[2];
-      const name       = isNew ? row[iName]      : row[1];
-      const dealer     = isNew ? row[iDealer]    : row[3];
-      const ts_raw     = isNew ? row[iTimestamp] : row[0];
-      const cohort_val = isNew ? row[iCohort]    : row[4];
-      if (!email) return;
+      const email      = isNew ? (iEmail  !== -1 ? row[iEmail]     : '') : row[2];
+      const name       = isNew ? (iName   !== -1 ? row[iName]      : '') : row[1];
+      const dealer     = isNew ? (iDealer !== -1 ? row[iDealer]    : '') : row[3];
+      const ts_raw     = isNew ? (iTimestamp !== -1 ? row[iTimestamp] : '') : row[0];
+      const cohort_val = isNew ? (iCohort !== -1 ? row[iCohort]    : '') : row[4];
+      if (!email || !String(email).trim()) return;
       const existing = map[email];
       const { score, pct } = calcScore(row, isNew);
       const ts = new Date(ts_raw);
