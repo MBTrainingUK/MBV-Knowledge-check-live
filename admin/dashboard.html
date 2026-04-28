@@ -133,6 +133,12 @@
     <div class="stat-card"><div class="label">Latest Submission</div><div class="value" id="stat-latest" style="font-size:0.95rem;margin-top:6px;">—</div><div class="sub"></div></div>
   </div>
 
+  <div class="section-card" id="trends-section" style="display:none;">
+    <h2>📈 Score Trends</h2>
+    <p class="section-sub">Score distribution across all participants.</p>
+    <div id="trends-body"></div>
+  </div>
+
   <div class="section-card" id="gap-section" style="display:none;">
     <h2>📊 MCQ Knowledge Gap Analysis</h2>
     <p class="section-sub">Per-question breakdown available once full data endpoint is enabled.</p>
@@ -234,6 +240,56 @@ function renderStats() {
   document.getElementById('stat-latest').textContent=formatDate(latest.timestamp).split(' ').slice(0,2).join(' ');
   const cohort=allResponses.find(r=>r.cohort)?.cohort||'';
   if(cohort) document.getElementById('header-cohort').textContent=cohort;
+}
+
+function renderTrends() {
+  const section = document.getElementById('trends-section');
+  if (!allResponses.length) { section.style.display='none'; return; }
+  section.style.display = 'block';
+  const container = document.getElementById('trends-body');
+
+  // Score distribution: bucket by score 0–8
+  const dist = Array(9).fill(0);
+  allResponses.forEach(r => { const s = getScore(r).score; if (s >= 0 && s <= 8) dist[s]++; });
+  const maxCount = Math.max(...dist, 1);
+
+  // Band summary
+  const total = allResponses.length;
+  const bands = [
+    { label: 'Excellent (75–100%)', min:6, max:8, color:'#28A745' },
+    { label: 'Good (50–74%)',       min:4, max:5, color:'#e6a817' },
+    { label: 'Needs support (<50%)',min:0, max:3, color:'#DC3545' }
+  ];
+
+  const bandHTML = bands.map(b => {
+    const count = allResponses.filter(r => { const s=getScore(r).score; return s>=b.min&&s<=b.max; }).length;
+    const pct = total > 0 ? Math.round((count/total)*100) : 0;
+    return `<div class="gap-bar-row">
+      <div class="gap-bar-label" style="display:flex;justify-content:space-between;">
+        <strong>${b.label}</strong>
+        <span style="color:${b.color};font-weight:700;">${count} participant${count!==1?'s':''} · ${pct}%</span>
+      </div>
+      <div class="gap-bar-bg"><div class="gap-bar-fill" style="width:${pct}%;background:${b.color};"></div></div>
+    </div>`;
+  }).join('');
+
+  // Per-score bar chart
+  const chartHTML = `<div style="margin-top:20px;">
+    <div style="font-size:0.78rem;font-weight:700;color:#333;margin-bottom:10px;">Score distribution (out of 8)</div>
+    <div style="display:flex;align-items:flex-end;gap:6px;height:80px;">
+      ${dist.map((count,score) => {
+        const h = Math.round((count/maxCount)*72);
+        const color = score>=6?'#28A745':score>=4?'#e6a817':'#DC3545';
+        return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;">
+          <span style="font-size:0.65rem;color:#888;">${count||''}</span>
+          <div style="width:100%;height:${h||2}px;background:${color};border-radius:2px 2px 0 0;"></div>
+          <span style="font-size:0.65rem;color:#555;">${score}</span>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+
+  container.innerHTML = bandHTML + chartHTML;
 }
 
 function renderGapAnalysis() {
@@ -364,7 +420,7 @@ document.getElementById('btn-refresh').addEventListener('click',render);
 async function render() {
   document.getElementById('table-container').innerHTML='<div class="loading">Loading responses…</div>';
   await Promise.all([loadData(),loadQuestions()]);
-  renderStats(); renderGapAnalysis(); renderOpenQuestions();
+  renderStats(); renderTrends(); renderGapAnalysis(); renderOpenQuestions();
   renderTable(document.getElementById('search-input').value);
 }
 
