@@ -187,35 +187,19 @@ async function loadQuestions() {
 
 async function loadData() {
   try {
-    const res  = await fetch(`${WEBHOOK}?action=responses`);
+    const res  = await fetch(`${WEBHOOK}?action=leaderboard`);
     const json = await res.json();
-    const header = json.header || [];
-    const rows   = json.rows   || [];
-    if (!header.length) { allResponses = []; return; }
-    const col = n => header.indexOf(n);
-
-    const iId=col('ID'), iTs=col('Timestamp'), iCohort=col('Cohort'), iTd=col('Training Date');
-    const iName=col('Name'), iEmail=col('Email'), iDealer=col('Dealer');
-    const iScore=col('MCQ Score'), iPct=col('MCQ %');
-    const mcqCols={}, openCols={};
-    MCQ_IDS.forEach(id => { mcqCols[id]=col('Q_'+id); });
-    OPEN_IDS.forEach(id => { openCols[id]=col('Open_'+id); });
-
-    allResponses = rows.filter(r=>r.some(c=>c!==''&&c!==null&&c!==undefined)).map(row => {
-      const answers={};
-      MCQ_IDS.forEach(id => { const v=row[mcqCols[id]]; if(v!==undefined&&v!=='') answers[id]=parseInt(v); });
-      OPEN_IDS.forEach(id => { const v=row[openCols[id]]; if(v&&String(v).trim()) answers[id]=String(v).trim(); });
-      return {
-        id:            row[iId]||'',
-        timestamp:     row[iTs]||'',
-        cohort:        row[iCohort]||'',
-        training_date: row[iTd]||'',
-        participant: { name:row[iName]||'', email:row[iEmail]||'', dealer:row[iDealer]||'' },
-        mcq_score: iScore!==-1&&row[iScore]!==''&&row[iScore]!==null ? Number(row[iScore]) : null,
-        mcq_pct:   iPct  !==-1&&row[iPct]  !==''&&row[iPct]  !==null ? Number(row[iPct])   : null,
-        answers
-      };
-    });
+    const entries = json.entries || [];
+    allResponses = entries.map(e => ({
+      id:            '',
+      timestamp:     e.timestamp || '',
+      cohort:        e.cohort    || '',
+      training_date: '',
+      participant: { name: e.name || '', email: e.email || '', dealer: e.dealer || '' },
+      mcq_score: e.score,
+      mcq_pct:   e.pct,
+      answers: {}
+    }));
   } catch(e) { console.warn('Webhook load failed:', e); allResponses=[]; }
 }
 
