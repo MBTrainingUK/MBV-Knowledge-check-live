@@ -334,40 +334,8 @@ function openModal(r) {
   document.getElementById('modal-name').textContent=r.participant.name||'Participant';
   document.getElementById('modal-meta').textContent=`${r.participant.email||''} · ${r.participant.dealer||''} · ${formatDate(r.timestamp)} · ${r.cohort||''}`;
   document.getElementById('modal-score').textContent=`MCQ Score: ${score} / 8  (${pct}%)`;
-  const body=document.getElementById('modal-body'); body.innerHTML='';
-
-  // MCQ
-  const mcqDiv=document.createElement('div');
-  mcqDiv.innerHTML='<div class="section-divider">Multiple Choice Questions</div>';
-  MCQ_IDS.forEach((id,i)=>{
-    const q=questionIndex[id], ans=r.answers[id], correct=MCQ_ANSWERS[id];
-    const isCorrect=ans!==undefined?ans===correct:null;
-    let ansHtml;
-    if(ans===undefined||ans===null){
-      ansHtml='<div class="a" style="color:#aaa;font-style:italic;">Not answered</div>';
-    } else {
-      const text=q?.options?.[ans]??`Option ${ans+1}`;
-      const css=isCorrect?'correct':'incorrect', icon=isCorrect?'✅ ':'❌ ';
-      ansHtml=`<div class="a ${css}">${icon}${text}</div>`;
-      if(!isCorrect&&q?.options) ansHtml+=`<div class="correct-hint">✅ Correct answer: ${q.options[correct]}</div>`;
-    }
-    const item=document.createElement('div'); item.className='qa-item';
-    item.innerHTML=`<div class="q-label">Q${i+1} · Multiple Choice</div><div class="q-text">${q?q.text:id}</div>${ansHtml}`;
-    mcqDiv.appendChild(item);
-  });
-  body.appendChild(mcqDiv);
-
-  // Open
-  const openDiv=document.createElement('div');
-  openDiv.innerHTML='<div class="section-divider">Open-Ended Questions</div>';
-  OPEN_IDS.forEach((id,i)=>{
-    const q=questionIndex[id], ans=r.answers[id];
-    const item=document.createElement('div'); item.className='qa-item';
-    item.innerHTML=`<div class="q-label">Open Q${i+1}</div><div class="q-text">${q?q.text:id}</div>${ans?`<div class="a">${ans.replace(/\n/g,'<br>')}</div>`:'<div class="a" style="color:#aaa;font-style:italic;">No response</div>'}`;
-    openDiv.appendChild(item);
-  });
-  body.appendChild(openDiv);
-
+  const body=document.getElementById('modal-body');
+  body.innerHTML=`<div style="padding:24px 0 8px;text-align:center;color:#aaa;font-size:0.85rem;">Per-question breakdown is not available in the current data view.<br>The overall score is stored in Google Sheets.</div>`;
   document.getElementById('modal-overlay').classList.add('open');
 }
 
