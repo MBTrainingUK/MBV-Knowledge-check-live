@@ -138,14 +138,15 @@ function doGet(e) {
     }
 
     // deduplicate by email — keep highest score, then earliest timestamp
+    const isNewFormat = iName !== -1 && iEmail !== -1; // new sheet has named headers
     const map = {};
     data.forEach(row => {
-      // support both old format (Timestamp,Name,Email,MA,...) and new format
-      const email   = iEmail  !== -1 ? row[iEmail]  : row[2];
-      const name    = iName   !== -1 ? row[iName]   : row[1];
-      const dealer  = iDealer !== -1 ? row[iDealer] : row[3];
-      const ts_raw  = iTimestamp !== -1 ? row[iTimestamp] : row[0];
-      const cohort_val = iCohort !== -1 ? row[iCohort] : row[4];
+      // new format uses named column headers; old format uses fixed positions
+      const email      = isNewFormat ? row[iEmail]  : row[2];
+      const name       = isNewFormat ? row[iName]   : row[1];
+      const dealer     = isNewFormat ? row[iDealer] : row[3];
+      const ts_raw     = isNewFormat ? row[iTimestamp] : row[0];
+      const cohort_val = isNewFormat ? row[iCohort] : row[4];
       if (!email) return;
       const existing = map[email];
       const { score, pct } = calcScore(row);
