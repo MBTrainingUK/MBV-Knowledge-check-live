@@ -17,6 +17,13 @@ const MCQ_ANSWERS = {
   s2q5: 1
 };
 const MCQ_TOTAL = MCQ_IDS.length; // 8
+const OPEN_IDS   = ['s2q1','s2q2','s2q3','s2q4','s2q6'];
+
+// ── UTILITY: run once from Apps Script editor to reset header ──
+function deleteHeaderRow() {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
+  if (sheet) sheet.deleteRow(1);
+}
 
 // ── POST: receive quiz submission ──────────────────────────
 function doPost(e) {
@@ -24,15 +31,24 @@ function doPost(e) {
     const data = JSON.parse(e.postData.contents);
     const ss    = SpreadsheetApp.getActiveSpreadsheet();
     let sheet   = ss.getSheetByName(SHEET_NAME);
+    const newHeader = [
+      'ID','Timestamp','Cohort','Training Date',
+      'Name','Email','Dealer',
+      'MCQ Score','MCQ %',
+      ...MCQ_IDS.map(id => `Q_${id}`),
+      ...OPEN_IDS.map(id => `Open_${id}`)
+    ];
 
     if (!sheet) {
       sheet = ss.insertSheet(SHEET_NAME);
-      sheet.appendRow([
-        'ID','Timestamp','Cohort','Training Date',
-        'Name','Email','Dealer',
-        'MCQ Score','MCQ %',
-        ...MCQ_IDS.map(id => `Q_${id}`)
-      ]);
+      sheet.appendRow(newHeader);
+    } else {
+      // If the sheet exists but has old-format headers, insert the new header row at the top.
+      const firstCell = sheet.getRange(1, 1).getValue();
+      if (firstCell !== 'ID') {
+        sheet.insertRowBefore(1);
+        sheet.getRange(1, 1, 1, newHeader.length).setValues([newHeader]);
+      }
     }
 
     const answers = data.answers || {};
@@ -54,7 +70,8 @@ function doPost(e) {
       p.dealer || p.ma || '',
       score,
       pct,
-      ...MCQ_IDS.map(id => answers[id] !== undefined ? answers[id] : '')
+      ...MCQ_IDS.map(id => answers[id] !== undefined ? answers[id] : ''),
+      ...OPEN_IDS.map(id => answers[id] !== undefined ? answers[id] : '')
     ]);
 
     return ContentService
@@ -113,43 +130,48 @@ function doGet(e) {
     // s2q1-open(13) s2q2-open(14) s2q3-open(15) s2q4-open(16) s2q5(17) s2q6-open(18)
     const OLD_MCQ_COLS = { s1q1:6, s1q2:7, s1q3:8, s1q4:9, s1q5:10, s1q6:11, s1q7:12, s2q5:17 };
 
-    function calcScore(row) {
-      // New format: use stored MCQ Score column
-      if (iScore !== -1 && row[iScore] !== '' && row[iScore] !== null && !isNaN(Number(row[iScore]))) {
-        return { score: Number(row[iScore]), pct: Number(row[iPct]) };
-      }
-      // New format fallback: Q_ named columns
-      let foundQCols = MCQ_IDS.some(id => answerCols[id] !== -1);
-      if (foundQCols) {
+    // Detect whether an individual row is new-format (col 0 is a UUID string)
+    function rowIsNewFormat(row) {
+      return typeof row[0] === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(row[0]).trim());
+    }
+
+    function calcScore(row, isNew) {
+      if (isNew) {
+        // New format: use stored MCQ Score column if available
+        if (iScore !== -1 && row[iScore] !== '' && row[iScore] !== null && !isNaN(Number(row[iScore]))) {
+          return { score: Number(row[iScore]), pct: Number(row[iPct]) };
+        }
+        // New format fallback: Q_ named columns
         let s = 0;
         MCQ_IDS.forEach(id => {
           const col = answerCols[id];
           if (col !== -1 && parseInt(row[col]) === MCQ_ANSWERS[id]) s++;
         });
         return { score: s, pct: Math.round((s / MCQ_TOTAL) * 100) };
+      } else {
+        // Old format: answers by fixed column position
+        let s = 0;
+        MCQ_IDS.forEach(id => {
+          const col = OLD_MCQ_COLS[id];
+          if (col !== undefined && parseInt(row[col]) === MCQ_ANSWERS[id]) s++;
+        });
+        return { score: s, pct: Math.round((s / MCQ_TOTAL) * 100) };
       }
-      // Old format fallback: answers by fixed column position
-      let s = 0;
-      MCQ_IDS.forEach(id => {
-        const col = OLD_MCQ_COLS[id];
-        if (col !== undefined && parseInt(row[col]) === MCQ_ANSWERS[id]) s++;
-      });
-      return { score: s, pct: Math.round((s / MCQ_TOTAL) * 100) };
     }
 
     // deduplicate by email — keep highest score, then earliest timestamp
-    const isNewFormat = iName !== -1 && iEmail !== -1; // new sheet has named headers
     const map = {};
     data.forEach(row => {
-      // new format uses named column headers; old format uses fixed positions
-      const email      = isNewFormat ? row[iEmail]  : row[2];
-      const name       = isNewFormat ? row[iName]   : row[1];
-      const dealer     = isNewFormat ? row[iDealer] : row[3];
-      const ts_raw     = isNewFormat ? row[iTimestamp] : row[0];
-      const cohort_val = isNewFormat ? row[iCohort] : row[4];
+      const isNew = rowIsNewFormat(row);
+      // Read fields from the correct columns based on each row's own format
+      const email      = isNew ? row[iEmail]     : row[2];
+      const name       = isNew ? row[iName]      : row[1];
+      const dealer     = isNew ? row[iDealer]    : row[3];
+      const ts_raw     = isNew ? row[iTimestamp] : row[0];
+      const cohort_val = isNew ? row[iCohort]    : row[4];
       if (!email) return;
       const existing = map[email];
-      const { score, pct } = calcScore(row);
+      const { score, pct } = calcScore(row, isNew);
       const ts = new Date(ts_raw);
       if (!existing || score > existing.score || (score === existing.score && ts < new Date(existing.timestamp))) {
         map[email] = {
