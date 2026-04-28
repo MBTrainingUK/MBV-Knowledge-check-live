@@ -141,7 +141,7 @@
 
   <div class="section-card" id="gap-section" style="display:none;">
     <h2>📊 MCQ Knowledge Gap Analysis</h2>
-    <p class="section-sub">Per-question breakdown available once full data endpoint is enabled.</p>
+    <p class="section-sub">Percentage of participants who answered each MCQ correctly. Lower = knowledge gap.</p>
     <div id="gap-bars"></div>
   </div>
 
@@ -193,23 +193,34 @@ async function loadQuestions() {
 
 async function loadData() {
   try {
-    const res  = await fetch(`${WEBHOOK}?action=leaderboard`);
+    const res  = await fetch(`${WEBHOOK}?action=responses`);
     const json = await res.json();
-    const entries = json.entries || [];
-    allResponses = entries.map(e => ({
-      id:            '',
-      timestamp:     e.timestamp || '',
-      cohort:        e.cohort    || '',
-      training_date: '',
-      participant: { name: e.name || '', email: e.email || '', dealer: e.dealer || '' },
-      mcq_score: typeof e.score === 'number' ? e.score : Number(e.score),
-      mcq_pct:   typeof e.pct   === 'number' ? e.pct   : Number(e.pct),
-      answers: {}
-    }));
-  } catch(err) {
-    console.error('Webhook load failed:', err);
-    allResponses=[];
-  }
+    const header = json.header || [];
+    const rows   = json.rows   || [];
+    if (!header.length) { allResponses = []; return; }
+    const col = n => header.indexOf(n);
+    const iId=col('ID'), iTs=col('Timestamp'), iCohort=col('Cohort'), iTd=col('Training Date');
+    const iName=col('Name'), iEmail=col('Email'), iDealer=col('Dealer');
+    const iScore=col('MCQ Score'), iPct=col('MCQ %');
+    const mcqCols={}, openCols={};
+    MCQ_IDS.forEach(id => { mcqCols[id]=col('Q_'+id); });
+    OPEN_IDS.forEach(id => { openCols[id]=col('Open_'+id); });
+    allResponses = rows.filter(r=>r.some(c=>c!==''&&c!==null&&c!==undefined)).map(row => {
+      const answers={};
+      MCQ_IDS.forEach(id => { const v=row[mcqCols[id]]; if(v!==undefined&&v!=='') answers[id]=parseInt(v); });
+      OPEN_IDS.forEach(id => { const v=row[openCols[id]]; if(v&&String(v).trim()) answers[id]=String(v).trim(); });
+      return {
+        id:            row[iId]||'',
+        timestamp:     row[iTs]||'',
+        cohort:        row[iCohort]||'',
+        training_date: row[iTd]||'',
+        participant: { name:row[iName]||'', email:row[iEmail]||'', dealer:row[iDealer]||'' },
+        mcq_score: iScore!==-1&&row[iScore]!==''&&row[iScore]!==null ? Number(row[iScore]) : null,
+        mcq_pct:   iPct  !==-1&&row[iPct]  !==''&&row[iPct]  !==null ? Number(row[iPct])   : null,
+        answers
+      };
+    });
+  } catch(err) { console.error('Webhook load failed:', err); allResponses=[]; }
 }
 
 function formatDate(raw) {
@@ -294,7 +305,8 @@ function renderTrends() {
 
 function renderGapAnalysis() {
   const section=document.getElementById('gap-section');
-  section.style.display='none'; return;
+  if(!allResponses.length){section.style.display='none';return;}
+  section.style.display='block';
   const container=document.getElementById('gap-bars'); container.innerHTML='';
   MCQ_IDS.forEach((id,i)=>{
     const q=questionIndex[id], correctIdx=MCQ_ANSWERS[id];
@@ -390,8 +402,37 @@ function openModal(r) {
   document.getElementById('modal-name').textContent=r.participant.name||'Participant';
   document.getElementById('modal-meta').textContent=`${r.participant.email||''} · ${r.participant.dealer||''} · ${formatDate(r.timestamp)} · ${r.cohort||''}`;
   document.getElementById('modal-score').textContent=`MCQ Score: ${score} / 8  (${pct}%)`;
-  const body=document.getElementById('modal-body');
-  body.innerHTML=`<div style="padding:24px 0 8px;text-align:center;color:#aaa;font-size:0.85rem;">Per-question breakdown is not available in the current data view.<br>The overall score is stored in Google Sheets.</div>`;
+  const body=document.getElementById('modal-body'); body.innerHTML='';
+
+  const mcqDiv=document.createElement('div');
+  mcqDiv.innerHTML='<div class="section-divider">Multiple Choice Questions</div>';
+  MCQ_IDS.forEach((id,i)=>{
+    const q=questionIndex[id], ans=r.answers[id], correct=MCQ_ANSWERS[id];
+    const isCorrect=ans!==undefined?ans===correct:null;
+    let ansHtml;
+    if(ans===undefined||ans===null){
+      ansHtml='<div class="a" style="color:#aaa;font-style:italic;">Not answered</div>';
+    } else {
+      const text=q?.options?.[ans]??`Option ${ans+1}`;
+      const css=isCorrect?'correct':'incorrect', icon=isCorrect?'✅ ':'❌ ';
+      ansHtml=`<div class="a ${css}">${icon}${text}</div>`;
+      if(!isCorrect&&q?.options) ansHtml+=`<div class="correct-hint">✅ Correct answer: ${q.options[correct]}</div>`;
+    }
+    const item=document.createElement('div'); item.className='qa-item';
+    item.innerHTML=`<div class="q-label">Q${i+1} · Multiple Choice</div><div class="q-text">${q?q.text:id}</div>${ansHtml}`;
+    mcqDiv.appendChild(item);
+  });
+  body.appendChild(mcqDiv);
+
+  const openDiv=document.createElement('div');
+  openDiv.innerHTML='<div class="section-divider">Open-Ended Questions</div>';
+  OPEN_IDS.forEach((id,i)=>{
+    const q=questionIndex[id], ans=r.answers[id];
+    const item=document.createElement('div'); item.className='qa-item';
+    item.innerHTML=`<div class="q-label">Open Q${i+1}</div><div class="q-text">${q?q.text:id}</div>${ans?`<div class="a">${ans.replace(/\n/g,'<br>')}</div>`:'<div class="a" style="color:#aaa;font-style:italic;">No response</div>'}`;
+    openDiv.appendChild(item);
+  });
+  body.appendChild(openDiv);
   document.getElementById('modal-overlay').classList.add('open');
 }
 
