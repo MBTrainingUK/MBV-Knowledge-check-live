@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Leaderboard · MBV Knowledge Check</title>
+  <style>
+    @font-face {
+      font-family: 'MBCorpoATitle';
+      src: url('../fonts/MBCorpoATitleOffice-Regular.ttf') format('truetype');
+      font-weight: 400;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'MBCorpoSText';
+      src: url('../fonts/MBCorpoSTextOffice-Light.ttf') format('truetype');
+      font-weight: 300;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'MBCorpoSText';
+      src: url('../fonts/MBCorpoSTextOffice-Regular.ttf') format('truetype');
+      font-weight: 400;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'MBCorpoSText';
+      src: url('../fonts/MBCorpoSTextOffice-Bold.ttf') format('truetype');
+      font-weight: 700;
+      font-display: swap;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black:  #000000;
+      --white:  #ffffff;
+      --silver: #b0b0b0;
+      --silver2:#d4d4d4;
+      --grey1:  #1a1a1a;
+      --grey2:  #2a2a2a;
+      --grey3:  #3a3a3a;
+      --grey4:  #4a4a4a;
+      --accent: #c0a96b;
+      --gold:   #c0a96b;
+      --radius: 4px;
+    }
+
+    html, body { height: 100%; font-family: 'MBCorpoSText', 'Segoe UI', Arial, sans-serif; background: var(--black); color: var(--white); }
+
+    header {
+      background: var(--black);
+      border-bottom: 1px solid var(--grey3);
+      padding: 0 32px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .logo-wrap { display: flex; align-items: center; gap: 16px; }
+    .mb-star { width: 40px; height: 40px; }
+    .header-divider { width: 1px; height: 28px; background: var(--grey3); }
+    .logo { font-size: 0.72rem; font-weight: 400; letter-spacing: 3px; text-transform: uppercase; color: var(--silver2); }
+    .header-sub { font-size: 0.65rem; letter-spacing: 2px; text-transform: uppercase; color: var(--grey4); }
+
+    main { max-width: 760px; margin: 0 auto; padding: 40px 24px 64px; }
+
+    @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes popIn  { from { opacity:0; transform:scale(0.97); } to { opacity:1; transform:scale(1); } }
+
+    .page-eyebrow { font-size: 0.62rem; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; font-weight: 400; }
+    .page-title { font-size: 2rem; font-weight: 400; font-family: 'MBCorpoATitle', serif; margin-bottom: 6px; }
+    .page-sub { font-size: 0.82rem; color: var(--silver); font-weight: 300; margin-bottom: 36px; line-height: 1.6; }
+    .page-divider { width: 40px; height: 1px; background: var(--accent); margin-bottom: 32px; }
+
+    /* top 3 podium */
+    .podium { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 32px; animation: popIn 0.4s ease; }
+    .podium-card {
+      background: var(--grey1);
+      border: 1px solid var(--grey3);
+      border-radius: var(--radius);
+      padding: 20px 16px;
+      text-align: center;
+      position: relative;
+    }
+    .podium-card.rank-1 { border-color: var(--accent); background: rgba(192,169,107,0.08); }
+    .podium-card.rank-2 { border-color: var(--silver); background: rgba(176,176,176,0.06); }
+    .podium-card.rank-3 { border-color: var(--grey3); }
+    .podium-medal { font-size: 1.6rem; margin-bottom: 8px; }
+    .podium-name { font-size: 0.9rem; font-weight: 600; margin-bottom: 4px; color: var(--white); }
+    .podium-dealer { font-size: 0.68rem; color: var(--silver); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 10px; font-weight: 300; }
+    .podium-score { font-size: 1.6rem; font-weight: 400; font-family: 'MBCorpoATitle', serif; color: var(--accent); }
+    .podium-score.rank-2 { color: var(--silver2); }
+    .podium-score.rank-3 { color: var(--silver); }
+    .podium-pct { font-size: 0.68rem; color: var(--grey4); margin-top: 2px; letter-spacing: 0.5px; }
+
+    /* table */
+    .lb-table { width: 100%; border-collapse: collapse; animation: fadeUp 0.5s ease 0.1s both; }
+    .lb-table thead tr { border-bottom: 1px solid var(--grey3); }
+    .lb-table th { font-size: 0.6rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: var(--grey4); padding: 10px 12px; text-align: left; }
+    .lb-table th.right { text-align: right; }
+    .lb-table tbody tr { border-bottom: 1px solid var(--grey2); transition: background 0.15s; }
+    .lb-table tbody tr:hover { background: var(--grey1); }
+    .lb-table td { padding: 14px 12px; font-size: 0.85rem; font-weight: 300; color: var(--silver2); vertical-align: middle; }
+    .lb-table td.right { text-align: right; }
+
+    .rank-num { font-size: 0.72rem; color: var(--grey4); font-weight: 400; width: 32px; }
+    .rank-joint { font-size: 0.6rem; color: var(--grey4); display: block; }
+    .entry-name { font-weight: 600; color: var(--white); font-size: 0.88rem; }
+    .entry-dealer { font-size: 0.72rem; color: var(--silver); font-weight: 300; margin-top: 2px; }
+    .score-pct { font-size: 0.95rem; font-weight: 600; color: var(--white); }
+    .score-raw { font-size: 0.68rem; color: var(--grey4); display: block; margin-top: 1px; }
+    .score-bar-wrap { width: 80px; height: 3px; background: var(--grey3); border-radius: 2px; display: inline-block; vertical-align: middle; margin-left: 10px; }
+    .score-bar-fill { height: 100%; background: var(--accent); border-radius: 2px; }
+
+    /* highlight own row */
+    .lb-table tbody tr.is-me { background: rgba(192,169,107,0.07); }
+    .lb-table tbody tr.is-me .entry-name::after { content: ' (you)'; font-size: 0.65rem; color: var(--accent); font-weight: 400; }
+
+    /* states */
+    .state-wrap { text-align: center; padding: 60px 20px; }
+    .state-wrap .state-icon { font-size: 2rem; margin-bottom: 16px; opacity: 0.4; }
+    .state-wrap p { font-size: 0.85rem; color: var(--silver); font-weight: 300; line-height: 1.6; }
+
+    .refresh-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+    .cohort-label { font-size: 0.65rem; color: var(--grey4); letter-spacing: 1px; text-transform: uppercase; }
+    .btn-refresh { background: transparent; border: 1px solid var(--grey3); color: var(--silver); font-size: 0.68rem; letter-spacing: 1px; text-transform: uppercase; padding: 7px 16px; border-radius: var(--radius); cursor: pointer; font-family: inherit; transition: border-color 0.15s, color 0.15s; }
+    .btn-refresh:hover { border-color: var(--silver); color: var(--white); }
+    .btn-refresh:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    .back-link { display: inline-block; margin-bottom: 28px; font-size: 0.68rem; color: var(--silver); letter-spacing: 1.5px; text-transform: uppercase; text-decoration: none; border-bottom: 1px solid var(--grey3); padding-bottom: 2px; transition: color 0.15s; }
+    .back-link:hover { color: var(--white); }
+
+    footer { text-align: center; padding: 20px; font-size: 0.6rem; color: var(--grey4); border-top: 1px solid var(--grey2); letter-spacing: 1px; text-transform: uppercase; }
+
+    @media (max-width: 520px) {
+      .podium { grid-template-columns: 1fr; }
+      header { padding: 0 16px; }
+      main { padding: 24px 16px 48px; }
+      .score-bar-wrap { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo-wrap">
+    <img class="mb-star" src="../images/MB-star_n_3Cweb.svg" alt="Mercedes-Benz Star" />
+    <div class="header-divider"></div>
+    <div>
+      <div class="logo">Mercedes-Benz Vans</div>
+      <div class="header-sub">Knowledge Check</div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <a href="index.html" class="back-link">← Back to Quiz</a>
+
+  <div class="page-eyebrow">Product &amp; Competition Programme</div>
+  <h1 class="page-title">Leaderboard</h1>
+  <p class="page-sub">MCQ scores only. Ranked highest to lowest. Joint ranks shown where scores are equal.</p>
+  <div class="page-divider"></div>
+
+  <div class="refresh-row">
+    <span class="cohort-label" id="cohort-label">Loading…</span>
+    <button class="btn-refresh" id="btn-refresh" onclick="loadLeaderboard()">↻ Refresh</button>
+  </div>
+
+  <div id="lb-content">
+    <div class="state-wrap">
+      <div class="state-icon">⋯</div>
+      <p>Loading scores…</p>
+    </div>
+  </div>
+</main>
+
+<footer>MBV Internal Use Only · Product &amp; Competition Programme · © 2026</footer>
+
+<script>
+const WEBHOOK = 'https://script.google.com/macros/s/AKfycbzV0YTUEFU0bqaNqF_Uy-usj52moJl1xlywveL-IlDhQKKkyFP67GtJVb524KPn5ZuP/exec';
+const MCQ_TOTAL = 8; // 7 stage 1 + 1 stage 2
+
+function formatName(fullName) {
+  if (!fullName) return '—';
+  const parts = fullName.trim().split(' ');
+  if (parts.length === 1) return parts[0];
+  return parts[0] + ' ' + parts[parts.length - 1].charAt(0) + '.';
+}
+
+function myEmail() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('mbv_kc_responses') || '[]');
+    if (saved.length) return saved[saved.length - 1].participant.email;
+  } catch(e) {}
+  return null;
+}
+
+function assignRanks(entries) {
+  // Sort highest score first, then earliest submission for ties
+  entries.sort((a, b) => b.score !== a.score ? b.score - a.score : new Date(a.timestamp) - new Date(b.timestamp));
+  let rank = 1;
+  for (let i = 0; i < entries.length; i++) {
+    if (i > 0 && entries[i].score === entries[i - 1].score) {
+      entries[i].rank = entries[i - 1].rank;
+      entries[i].joint = true;
+      entries[i - 1].joint = true;
+    } else {
+      entries[i].rank = rank;
+    }
+    rank++;
+  }
+  return entries;
+}
+
+function renderLeaderboard(entries, cohort) {
+  document.getElementById('cohort-label').textContent = cohort || '';
+  if (!entries || entries.length === 0) {
+    document.getElementById('lb-content').innerHTML = `
+      <div class="state-wrap">
+        <div class="state-icon">📋</div>
+        <p>No completed submissions yet.<br>Be the first to finish the quiz!</p>
+      </div>`;
+    return;
+  }
+
+  const me = myEmail();
+  const top3 = entries.slice(0, Math.min(3, entries.length));
+  const medals = ['🥇', '🥈', '🥉'];
+  const rankClass = ['rank-1', 'rank-2', 'rank-3'];
+
+  const podiumHTML = `
+    <div class="podium">
+      ${top3.map((e, i) => `
+        <div class="podium-card ${rankClass[i]}">
+          <div class="podium-medal">${medals[i]}</div>
+          <div class="podium-name">${formatName(e.name)}</div>
+          <div class="podium-dealer">${e.dealer || '—'}</div>
+          <div class="podium-score ${rankClass[i]}">${e.pct}%</div>
+          <div class="podium-pct">${e.score} / ${MCQ_TOTAL} correct</div>
+        </div>`).join('')}
+    </div>`;
+
+  const tableRows = entries.map(e => {
+    const isMe = me && e.email === me;
+    const pctWidth = e.pct;
+    return `
+      <tr class="${isMe ? 'is-me' : ''}">
+        <td class="rank-num">${e.rank}${e.joint ? '<span class="rank-joint">=</span>' : ''}</td>
+        <td>
+          <div class="entry-name">${formatName(e.name)}</div>
+          <div class="entry-dealer">${e.dealer || '—'}</div>
+        </td>
+        <td class="right">
+          <span class="score-pct">${e.pct}%</span>
+          <span class="score-raw">${e.score} / ${MCQ_TOTAL}</span>
+        </td>
+        <td style="width:110px;padding-left:0;">
+          <div class="score-bar-wrap"><div class="score-bar-fill" style="width:${pctWidth}%"></div></div>
+        </td>
+      </tr>`;
+  }).join('');
+
+  document.getElementById('lb-content').innerHTML = `
+    ${podiumHTML}
+    <table class="lb-table">
+      <thead>
+        <tr>
+          <th style="width:40px;">#</th>
+          <th>Participant</th>
+          <th class="right">Score</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>${tableRows}</tbody>
+    </table>`;
+}
+
+async function loadLeaderboard() {
+  const btn = document.getElementById('btn-refresh');
+  btn.disabled = true;
+  btn.textContent = 'Loading…';
+  document.getElementById('cohort-label').textContent = 'Loading…';
+
+  try {
+    const res = await fetch(`${WEBHOOK}?action=leaderboard`);
+    const data = await res.json();
+    const entries = assignRanks(data.entries || []);
+    renderLeaderboard(entries, data.cohort);
+  } catch(e) {
+    document.getElementById('lb-content').innerHTML = `
+      <div class="state-wrap">
+        <div class="state-icon">⚠️</div>
+        <p>Unable to load scores. Please try refreshing.<br><span style="font-size:0.75rem;color:var(--grey4);">${e.message}</span></p>
+      </div>`;
+    document.getElementById('cohort-label').textContent = '';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '↻ Refresh';
+  }
+}
+
+loadLeaderboard();
+</script>
+</body>
+</html>
