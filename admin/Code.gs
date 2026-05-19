@@ -104,6 +104,25 @@ function doGet(e) {
         .setMimeType(ContentService.MimeType.JSON);
     }
 
+
+    if (action === 'clear') {
+      const ss3    = SpreadsheetApp.getActiveSpreadsheet();
+      const sheet3 = ss3.getSheetByName(SHEET_NAME);
+      if (!sheet3) {
+        return ContentService
+          .createTextOutput(JSON.stringify({ status: 'ok', cleared: 0 }))
+          .setMimeType(ContentService.MimeType.JSON);
+      }
+      const lastRow = sheet3.getLastRow();
+      // Keep row 1 (header), delete everything below it
+      if (lastRow > 1) {
+        sheet3.deleteRows(2, lastRow - 1);
+      }
+      return ContentService
+        .createTextOutput(JSON.stringify({ status: 'ok', cleared: lastRow - 1 }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
     if (action !== 'leaderboard') {
       return ContentService
         .createTextOutput(JSON.stringify({ status: 'ok' }))
