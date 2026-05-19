@@ -184,6 +184,23 @@
 
 </main>
 
+<div id="clear-modal-overlay">
+  <div id="clear-modal-box">
+    <div class="clear-modal-icon">⚠️</div>
+    <div class="clear-modal-title">Clear All Response Data?</div>
+    <p style="font-size:0.88rem;color:#555;margin-bottom:0;">You are about to permanently delete all submitted responses from the Google Sheet.</p>
+    <div class="clear-modal-warning">
+      <strong>⛔ This action cannot be undone.</strong>
+      All participant responses, scores and open answers will be wiped. There is no way to recover this data once deleted.
+    </div>
+    <p style="font-size:0.8rem;color:#888;">Only proceed if you are resetting for a new cohort and have already exported a CSV backup.</p>
+    <div class="clear-modal-actions">
+      <button class="btn btn-outline" id="btn-clear-cancel">Cancel</button>
+      <button class="btn btn-danger" id="btn-clear-confirm">Yes, delete everything</button>
+    </div>
+  </div>
+</div>
+
 <div id="modal-overlay">
   <div id="modal-box">
     <button class="modal-close" id="modal-close">✕</button>
@@ -526,23 +543,6 @@ document.getElementById('btn-clear-confirm').addEventListener('click', async () 
 
 render();
 </script>
-
-<div id="clear-modal-overlay">
-  <div id="clear-modal-box">
-    <div class="clear-modal-icon">⚠️</div>
-    <div class="clear-modal-title">Clear All Response Data?</div>
-    <p style="font-size:0.88rem;color:#555;margin-bottom:0;">You are about to permanently delete all submitted responses from the Google Sheet.</p>
-    <div class="clear-modal-warning">
-      <strong>⛔ This action cannot be undone.</strong>
-      All participant responses, scores and open answers will be wiped. There is no way to recover this data once deleted.
-    </div>
-    <p style="font-size:0.8rem;color:#888;">Only proceed if you are resetting for a new cohort and have already exported a CSV backup.</p>
-    <div class="clear-modal-actions">
-      <button class="btn btn-outline" id="btn-clear-cancel">Cancel</button>
-      <button class="btn btn-danger" id="btn-clear-confirm">Yes, delete everything</button>
-    </div>
-  </div>
-</div>
 
 </body>
 </html>
