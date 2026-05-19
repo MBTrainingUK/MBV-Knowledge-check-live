@@ -32,6 +32,28 @@
     .btn-primary:hover { background: var(--blue-dark); }
     .btn-outline { background: #fff; color: var(--blue); border: 2px solid var(--blue); }
     .btn-outline:hover { background: var(--blue); color: #fff; }
+    .btn-danger { background: #DC3545; color: #fff; }
+    .btn-danger:hover { background: #b02030; }
+
+    #clear-modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.55); z-index: 200;
+      align-items: center; justify-content: center; padding: 20px;
+    }
+    #clear-modal-overlay.open { display: flex; }
+    #clear-modal-box {
+      background: #fff; border-radius: 10px; max-width: 460px; width: 100%;
+      padding: 28px 32px; text-align: center;
+    }
+    .clear-modal-icon { font-size: 2.4rem; margin-bottom: 12px; }
+    .clear-modal-title { font-size: 1.1rem; font-weight: 800; color: #DC3545; margin-bottom: 8px; }
+    .clear-modal-warning {
+      background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px;
+      padding: 12px 16px; font-size: 0.82rem; color: #664d03; margin: 14px 0; text-align: left; line-height: 1.6;
+    }
+    .clear-modal-warning strong { display: block; margin-bottom: 4px; }
+    .clear-modal-actions { display: flex; gap: 10px; justify-content: center; margin-top: 18px; }
+
 
     main { padding: 24px 32px; max-width: 1300px; margin: 0 auto; }
 
@@ -121,6 +143,7 @@
   <h1>Response Tracker</h1>
   <button class="btn btn-outline" id="btn-refresh">🔄 Refresh</button>
   <button class="btn btn-primary" id="btn-export-csv">⬇ Export CSV</button>
+  <button class="btn btn-danger" id="btn-clear-data">🗑 Clear Data</button>
 </div>
 
 <main>
@@ -465,7 +488,61 @@ async function render() {
   renderTable(document.getElementById('search-input').value);
 }
 
+
+// ── Clear data ────────────────────────────────────────────────────────────────
+document.getElementById('btn-clear-data').addEventListener('click', () => {
+  document.getElementById('clear-modal-overlay').classList.add('open');
+});
+document.getElementById('btn-clear-cancel').addEventListener('click', () => {
+  document.getElementById('clear-modal-overlay').classList.remove('open');
+});
+document.getElementById('clear-modal-overlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('clear-modal-overlay'))
+    document.getElementById('clear-modal-overlay').classList.remove('open');
+});
+document.getElementById('btn-clear-confirm').addEventListener('click', async () => {
+  const btn = document.getElementById('btn-clear-confirm');
+  btn.textContent = 'Deleting…';
+  btn.disabled = true;
+  try {
+    const res  = await fetch(WEBHOOK + '?action=clear');
+    const json = await res.json();
+    if (json.status === 'ok' || json.cleared !== undefined) {
+      document.getElementById('clear-modal-overlay').classList.remove('open');
+      allResponses = [];
+      renderStats(); renderTrends(); renderGapAnalysis(); renderOpenQuestions();
+      renderTable('');
+      alert('✅ All response data has been cleared.');
+    } else {
+      alert('⚠️ Something went wrong: ' + (json.error || JSON.stringify(json)));
+    }
+  } catch (err) {
+    alert('❌ Request failed: ' + err.message);
+  } finally {
+    btn.textContent = 'Yes, delete everything';
+    btn.disabled = false;
+  }
+});
+
 render();
 </script>
+
+<div id="clear-modal-overlay">
+  <div id="clear-modal-box">
+    <div class="clear-modal-icon">⚠️</div>
+    <div class="clear-modal-title">Clear All Response Data?</div>
+    <p style="font-size:0.88rem;color:#555;margin-bottom:0;">You are about to permanently delete all submitted responses from the Google Sheet.</p>
+    <div class="clear-modal-warning">
+      <strong>⛔ This action cannot be undone.</strong>
+      All participant responses, scores and open answers will be wiped. There is no way to recover this data once deleted.
+    </div>
+    <p style="font-size:0.8rem;color:#888;">Only proceed if you are resetting for a new cohort and have already exported a CSV backup.</p>
+    <div class="clear-modal-actions">
+      <button class="btn btn-outline" id="btn-clear-cancel">Cancel</button>
+      <button class="btn btn-danger" id="btn-clear-confirm">Yes, delete everything</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
