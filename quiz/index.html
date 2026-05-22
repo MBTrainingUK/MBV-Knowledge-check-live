@@ -87,6 +87,7 @@
     #progress-label { font-size: 0.6rem; color: var(--grey4); padding: 6px 0 7px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500; }
 
     main { max-width: 760px; margin: 0 auto; padding: 32px 24px 64px; }
+    main.main-landing { max-width: none; padding: 0; }
 
     /* ── ANIMATIONS ── */
     @keyframes fadeUp  { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
@@ -99,11 +100,14 @@
     /* ── WELCOME ── */
     .welcome-wrap { text-align: center; padding: 40px 8px; animation: fadeUp 0.5s ease; }
     .welcome-wrap--landing {
-      position: relative;
-      border: 1px solid var(--grey2);
-      border-radius: var(--radius-lg);
-      overflow: hidden;
-      padding: 56px 20px;
+      min-height: calc(100vh - 150px);
+      width: 100vw;
+      margin-left: calc(50% - 50vw);
+      margin-right: calc(50% - 50vw);
+      padding: 72px 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
       background:
         linear-gradient(rgba(0,0,0,0.68), rgba(0,0,0,0.72)),
         url('../images/Landing.jpg') center center / cover no-repeat;
@@ -294,6 +298,7 @@ function setScreen(html) {
 
 /* WELCOME */
 function showWelcome() {
+  document.getElementById('screen-container').classList.add('main-landing');
   setScreen(`
     <div class="welcome-wrap welcome-wrap--landing">
       <div class="welcome-star">
@@ -318,6 +323,7 @@ function showWelcome() {
 
 /* NAME SCREEN */
 function showNameScreen() {
+  document.getElementById('screen-container').classList.remove('main-landing');
   setScreen(`
     <div class="form-card">
       <h2>Before we begin…</h2>
