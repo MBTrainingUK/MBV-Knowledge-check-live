@@ -70,12 +70,13 @@
       top: 0;
       z-index: 50;
     }
-    .logo-wrap { display: flex; align-items: center; gap: 16px; }
+    .logo-wrap { display: flex; align-items: center; }
+    .logo-stack { display: flex; flex-direction: column; align-items: flex-start; }
+    .header-center-star { position: absolute; left: 50%; transform: translateX(-50%); width: 44px; display: flex; justify-content: center; align-items: center; }
     .mb-star {
       width: 40px; height: 40px; flex-shrink: 0;
     }
     .logo { font-size: 0.72rem; font-weight: 400; letter-spacing: 3px; text-transform: uppercase; color: var(--silver2); font-family: 'MBCorpoSText', sans-serif; }
-    .header-divider { width: 1px; height: 28px; background: var(--grey3); }
     .header-sub { font-size: 0.65rem; letter-spacing: 2px; text-transform: uppercase; color: var(--grey4); font-weight: 400; }
     #header-right { font-size: 0.72rem; color: var(--silver); letter-spacing: 1px; }
 
@@ -226,13 +227,12 @@
 
 <header>
   <div class="logo-wrap">
-    <img class="mb-star" src="../images/MB-star_n_3Cweb.svg" alt="Mercedes-Benz Star" />
-    <div class="header-divider"></div>
-    <div>
+    <div class="logo-stack">
       <div class="logo">Mercedes-Benz Vans</div>
       <div class="header-sub">Knowledge Check</div>
     </div>
   </div>
+  <div class="header-center-star"><img class="mb-star" src="../images/MB-star_n_3Cweb.svg" alt="Mercedes-Benz Star" /></div>
   <div id="header-right"></div>
 </header>
 
