@@ -109,11 +109,6 @@
     .pill { background: var(--grey2); border: 1px solid var(--grey3); border-radius: 2px; padding: 6px 16px; font-size: 0.72rem; color: var(--silver2); letter-spacing: 0.5px; font-weight: 400; }
     .pill strong { color: var(--accent); font-weight: 600; }
 
-    .prize-box { background: var(--grey1); border: 1px solid var(--grey3); border-left: 3px solid var(--accent); border-radius: var(--radius); padding: 16px 20px; margin: 0 auto 32px; max-width: 440px; display: flex; align-items: flex-start; gap: 14px; text-align: left; }
-    .prize-box .icon { font-size: 1.4rem; flex-shrink: 0; margin-top: 2px; }
-    .prize-box p { font-size: 0.82rem; color: var(--silver); line-height: 1.6; font-weight: 300; }
-    .prize-box strong { color: var(--white); font-weight: 600; }
-
     /* ── BUTTONS ── */
     .btn { display: inline-block; padding: 14px 36px; border-radius: var(--radius); font-size: 0.82rem; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; letter-spacing: 1.5px; text-transform: uppercase; font-family: inherit; }
     .btn-primary { background: var(--white); color: var(--black); }
@@ -304,10 +299,6 @@ function showWelcome() {
         <div class="pill">~8–12 mins</div>
         <div class="pill">MCQ + open</div>
       </div>
-      <div class="prize-box">
-        <div class="icon">🎁</div>
-        <p><strong>You could win a prize!</strong> Complete the full knowledge check to be entered into the prize draw. Winners notified by email.</p>
-      </div>
       <button class="btn btn-primary" id="btn-start">Begin →</button>
       <div style="margin-top:16px;">
         <a href="leaderboard.html" style="font-size:0.72rem;color:var(--silver);letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;border-bottom:1px solid var(--grey3);padding-bottom:2px;">View Leaderboard →</a>
@@ -323,22 +314,18 @@ function showNameScreen() {
   setScreen(`
     <div class="form-card">
       <h2>Before we begin…</h2>
-      <p class="sub">Just a couple of details so we can enter you into the prize draw.</p>
-      <div class="field"><label>Full Name</label><input id="f-name" type="text" placeholder="e.g. Sarah Jones" autocomplete="name" /></div>
-      <div class="field"><label>Work Email</label><input id="f-email" type="email" placeholder="e.g. sarah.jones@mercedes-benz.com" /></div>
-      <div class="field"><label>Dealer</label><input id="f-ma" type="text" placeholder="e.g. London South" /></div>
+      <p class="sub">Please tell us which dealership you're from.</p>
+      <div class="field"><label>Dealership</label><input id="f-ma" type="text" placeholder="e.g. London South" /></div>
       <div class="nav-row" style="margin-top:24px;"><span></span>
         <button class="btn btn-gold" id="btn-name-next">Continue →</button>
       </div>
     </div>
   `);
   document.getElementById('btn-name-next').addEventListener('click', () => {
-    const name  = document.getElementById('f-name').value.trim();
-    const email = document.getElementById('f-email').value.trim();
     const ma    = document.getElementById('f-ma').value.trim();
-    if (!name || !email) { alert('Please enter your name and email to continue.'); return; }
-    PARTICIPANT = { name, email, dealer: ma };
-    document.getElementById('header-right').textContent = name.split(' ')[0];
+    if (!ma) { alert('Please enter your dealership to continue.'); return; }
+    PARTICIPANT = { name: '', email: '', dealer: ma };
+    document.getElementById('header-right').textContent = ma;
     CURRENT = 0;
     showQuestion(0);
   });
@@ -488,9 +475,8 @@ function saveAndFinish() {
 
   try {
     const existing = JSON.parse(localStorage.getItem('mbv_kc_responses') || '[]');
-    const filtered = existing.filter(r => r.participant.email !== PARTICIPANT.email);
-    filtered.push(response);
-    localStorage.setItem('mbv_kc_responses', JSON.stringify(filtered));
+    existing.push(response);
+    localStorage.setItem('mbv_kc_responses', JSON.stringify(existing));
   } catch(e) {}
 
   fetch(WEBHOOK, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(response) })
@@ -501,8 +487,8 @@ function saveAndFinish() {
       <div class="thankyou-star">
         <img src="../images/MB-star_n_3Cweb.svg" alt="Mercedes-Benz Star" style="width:64px;height:64px;" />
       </div>
-      <h1>Thank you, ${PARTICIPANT.name.split(' ')[0]}.</h1>
-      <p class="sub">You've completed the MBV Knowledge Check and you're now entered into the prize draw. We'll be in touch if you're a winner!</p>
+      <h1>Thank you.</h1>
+      <p class="sub">You've completed the MBV Knowledge Check. Thank you for sharing your responses.</p>
       <div class="ty-cards">
         <div class="ty-card"><h3>What happens next?</h3><p>Your responses will be reviewed by the T&amp;C team to shape future P&amp;C programme content.</p></div>
         <div class="ty-card"><h3>Your data</h3><p>Responses are not shared with your line manager and are used only to improve training.</p></div>

@@ -60,7 +60,6 @@ serve.py            — Local preview server (development only)
 - **Timing:** Knowledge check sent 8 weeks after training
 - **Cohort size:** Max 30 participants per cohort
 - **Cadence:** Repeats every 8 weeks with a new cohort
-- **Incentive:** Prize draw entry on full completion
 - **Purpose:** Diagnostic only — no pass/fail scores, results not shared with line managers
 
 ### Cohort Timeline
