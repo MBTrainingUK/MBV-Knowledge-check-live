@@ -122,6 +122,8 @@
       color: var(--white);
       font-family: 'MBCorpoATitle', serif;
       max-width: 520px;
+      margin: 0 auto;
+      text-align: center;
     }
     .landing-begin {
       align-self: center;
@@ -269,7 +271,7 @@
 
 <div id="progress-wrap">
   <div id="progress-bar-bg"><div id="progress-bar-fill"></div></div>
-  <div id="progress-label">Ready to start</div>
+  <div id="progress-label"></div>
 </div>
 
 <main id="screen-container"></main>
@@ -304,7 +306,7 @@ function updateProgress() {
   const pct = totalQ() === 0 ? 0 : Math.round((answeredQ() / totalQ()) * 100);
   document.getElementById('progress-bar-fill').style.width = pct + '%';
   document.getElementById('progress-label').textContent =
-    pct === 0   ? 'Ready to start' :
+    pct === 0   ? '' :
     pct === 100 ? 'All done ✓' :
     `${answeredQ()} of ${totalQ()} questions answered`;
 }
@@ -318,7 +320,7 @@ function showWelcome() {
   document.getElementById('screen-container').classList.add('main-landing');
   setScreen(`
     <div class="welcome-wrap welcome-wrap--landing">
-      <h1 class="landing-title">Knowledge Check</h1>
+      <h1 class="landing-title">Knowledge Check Quiz</h1>
       <button class="btn btn-primary landing-begin" id="btn-start">Begin →</button>
     </div>
   `);
