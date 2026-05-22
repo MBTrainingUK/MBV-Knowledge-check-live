@@ -98,6 +98,16 @@
 
     /* ── WELCOME ── */
     .welcome-wrap { text-align: center; padding: 40px 8px; animation: fadeUp 0.5s ease; }
+    .welcome-wrap--landing {
+      position: relative;
+      border: 1px solid var(--grey2);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      padding: 56px 20px;
+      background:
+        linear-gradient(rgba(0,0,0,0.68), rgba(0,0,0,0.72)),
+        url('../images/Landing.jpg') center center / cover no-repeat;
+    }
     .welcome-star { margin: 0 auto 20px; }
     .welcome-star svg { width: 72px; height: 72px; }
     .welcome-eyebrow { font-size: 0.65rem; letter-spacing: 4px; text-transform: uppercase; color: var(--silver); margin-bottom: 20px; font-weight: 400; }
@@ -285,7 +295,7 @@ function setScreen(html) {
 /* WELCOME */
 function showWelcome() {
   setScreen(`
-    <div class="welcome-wrap">
+    <div class="welcome-wrap welcome-wrap--landing">
       <div class="welcome-star">
         <img src="../images/MB-star_n_3Cweb.svg" alt="Mercedes-Benz Star" style="width:72px;height:72px;" />
       </div>
@@ -300,9 +310,6 @@ function showWelcome() {
         <div class="pill">MCQ + open</div>
       </div>
       <button class="btn btn-primary" id="btn-start">Begin →</button>
-      <div style="margin-top:16px;">
-        <a href="leaderboard.html" style="font-size:0.72rem;color:var(--silver);letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;border-bottom:1px solid var(--grey3);padding-bottom:2px;">View Leaderboard →</a>
-      </div>
     </div>
   `);
   document.getElementById('btn-start').addEventListener('click', showNameScreen);
