@@ -127,9 +127,35 @@
     .loading { text-align: center; padding: 32px; color: #888; font-size: 0.88rem; }
 
     @media (max-width: 640px) { main { padding: 16px; } .topbar { padding: 10px 16px; } header { padding: 14px 16px; } }
+
+    #auth-overlay {
+      position: fixed; inset: 0; background: #000000; z-index: 999;
+      display: flex; align-items: center; justify-content: center; padding: 20px;
+    }
+    #auth-box { background: #fff; border-radius: 10px; max-width: 360px; width: 100%; padding: 32px 28px; text-align: center; }
+    #auth-box .logo { font-size: 1.6rem; font-weight: 900; letter-spacing: 2px; margin-bottom: 4px; color: var(--dark); }
+    #auth-box .logo span { color: var(--blue); }
+    #auth-box .subtitle { font-size: 0.78rem; color: #888; margin-bottom: 22px; }
+    #auth-password {
+      width: 100%; padding: 10px 12px; border: 1px solid #ccd5e0; border-radius: 6px;
+      font-size: 0.92rem; margin-bottom: 12px;
+    }
+    #auth-password:focus { outline: none; border-color: var(--blue); }
+    #auth-error { color: var(--red); font-size: 0.8rem; margin-top: 10px; display: none; }
+    body.auth-locked { overflow: hidden; }
   </style>
 </head>
-<body>
+<body class="auth-locked">
+
+<div id="auth-overlay">
+  <div id="auth-box">
+    <div class="logo">MB<span>V</span></div>
+    <div class="subtitle">Knowledge Check · Admin Dashboard</div>
+    <input type="password" id="auth-password" placeholder="Password" autocomplete="current-password" />
+    <button class="btn btn-primary" id="auth-submit" style="width:100%;">Unlock</button>
+    <div id="auth-error">Incorrect password — try again.</div>
+  </div>
+</div>
 
 <header>
   <div>
@@ -541,7 +567,42 @@ document.getElementById('btn-clear-confirm').addEventListener('click', async () 
   }
 });
 
-render();
+// ── Password gate ────────────────────────────────────────────────────────────
+const AUTH_HASH = '3d30b555dff7d0f69f13324d11c08ec841b53eff9e06e75b64e4fea1ca254e31';
+const AUTH_KEY  = 'mbv_admin_auth';
+
+async function sha256Hex(text) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+function unlockApp() {
+  document.getElementById('auth-overlay').style.display = 'none';
+  document.body.classList.remove('auth-locked');
+  render();
+}
+
+async function submitAuth() {
+  const input = document.getElementById('auth-password');
+  const hash = await sha256Hex(input.value);
+  if (hash === AUTH_HASH) {
+    localStorage.setItem(AUTH_KEY, 'ok');
+    unlockApp();
+  } else {
+    document.getElementById('auth-error').style.display = 'block';
+    input.value = '';
+    input.focus();
+  }
+}
+
+document.getElementById('auth-submit').addEventListener('click', submitAuth);
+document.getElementById('auth-password').addEventListener('keydown', e => { if (e.key === 'Enter') submitAuth(); });
+
+if (localStorage.getItem(AUTH_KEY) === 'ok') {
+  unlockApp();
+} else {
+  document.getElementById('auth-password').focus();
+}
 </script>
 
 </body>
